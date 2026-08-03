@@ -2,109 +2,193 @@
 
 ## 1. Purpose
 
-Mentat-Core provisions a reproducible Ubuntu workstation for bioinformatics development and scientific computing.
+Mentat-Core is a modular provisioning framework for bioinformatics workstations.
 
-Its purpose is to reduce the time, inconsistency and manual work involved in configuring a new computer.
+Its goal is to transform a clean Ubuntu installation into a reproducible scientific computing environment using a predictable, testable and extensible architecture.
 
-## 2. Target platform
+The project minimizes manual configuration while promoting reproducibility, maintainability and portability across research environments.
 
-The first supported platform is:
+---
 
-* Ubuntu 22.04 LTS and Ubuntu 24.04 LTS
-* x86_64 architecture
-* Local workstation
-* User with sudo privileges
+## 2. Target Platform
 
-Other Linux distributions, macOS, Windows, HPC clusters and cloud environments are initially out of scope.
+The initial supported platform is:
 
-## 3. Design principles
+- Ubuntu 22.04 LTS
+- Ubuntu 24.04 LTS
+- x86_64 architecture
+- Local workstation
+- User with sudo privileges
 
-Mentat-Core should be:
+The following platforms are currently out of scope:
 
-* Reproducible
-* Idempotent
-* Modular
-* Transparent
-* Testable
-* Safe to run repeatedly
-* Easy to extend
+- Other Linux distributions
+- macOS
+- Windows
+- HPC clusters
+- Cloud environments
 
-The project should avoid unnecessary global installations and should separate system provisioning from scientific workflows.
+---
 
-## 4. High-level workflow
+## 3. Design Philosophy
 
-```text
-Clean Ubuntu installation
-        ↓
-bootstrap.sh
-        ↓
-Install or verify Ansible
-        ↓
-Run Ansible playbook
-        ↓
-Install system dependencies
-        ↓
-Configure development tools
-        ↓
-Install Micromamba environments
-        ↓
-Verify installation
-        ↓
-Bioinformatics-ready workstation
+Mentat-Core follows a simple design philosophy.
+
+- One module, one responsibility.
+- Validation is separated from installation.
+- Installation is separated from configuration.
+- Configuration is separated from verification.
+
+Every component should be:
+
+- Reproducible
+- Idempotent
+- Modular
+- Testable
+- Transparent
+- Safe to execute repeatedly
+- Easy to extend
+
+The framework should avoid unnecessary global installations and clearly separate workstation provisioning from scientific workflows.
+
+---
+
+## 4. High-Level Workflow
+
+```
+Clean Ubuntu Installation
+          │
+          ▼
+     bootstrap.sh
+          │
+          ▼
+       Checks
+          │
+          ▼
+ Install / Verify Ansible
+          │
+          ▼
+   Execute Playbooks
+          │
+          ▼
+    Configuration
+          │
+          ▼
+     Verification
+          │
+          ▼
+ Bioinformatics Workstation
 ```
 
-## 5. Main components
+---
+
+## 5. Internal Architecture
+
+```
+bootstrap.sh
+        │
+        ▼
+lib/init.sh
+        │
+        ▼
+──────────────────────────────────
+
+Checks
+│
+├── Operating System
+├── sudo
+├── Internet
+├── Git
+└── curl
+
+↓
+
+Installers
+
+↓
+
+Configuration
+
+↓
+
+Verification
+```
+
+The bootstrap script orchestrates the provisioning process but does not implement installation logic directly.
+
+---
+
+## 6. Main Components
 
 ### bootstrap.sh
 
 Responsibilities:
 
-* Detect the operating system
-* Verify that Ubuntu 22.04 LTS and Ubuntu 24.04 LTS is supported
-* Check sudo availability
-* Install Ansible if required
-* Run the main Ansible playbook
-* Stop with clear error messages when a step fails
+- Initialize Mentat-Core
+- Load internal modules
+- Execute system checks
+- Ensure Ansible is available
+- Launch the provisioning playbook
+- Exit gracefully on failure
 
-The bootstrap script should remain small and should not contain the complete installation logic.
+The bootstrap script should remain small and contain only orchestration logic.
 
-### Ansible
+---
 
-Ansible manages persistent system configuration.
+### Checks
 
-Responsibilities:
-
-* Install system packages
-* Configure Git
-* Install Docker
-* Install Java
-* Install Nextflow
-* Install Micromamba
-* Install R
-* Apply optional shell configuration
-* Run verification tasks
-
-### Micromamba
-
-Micromamba manages isolated scientific software environments.
-
-Initial environments:
-
-* core
-* quality-control
-* amplicon
-* metagenomics
-* transcriptomics
-
-The first release may only implement the `core` environment.
-
-### Verification
-
-Verification scripts confirm that installed components are available and functional.
+Checks validate that the system is ready before any installation begins.
 
 Examples:
 
-```bash
+- Verify supported operating system
+- Verify sudo privileges
+- Verify Internet connectivity
+- Verify Git availability
+- Verify required utilities
+
+Checks never modify the system.
+
+---
+
+### Installers
+
+Installers prepare the software required to provision the workstation.
+
+Initially:
+
+- Ansible
+
+Future installers may include:
+
+- Docker
+- Java
+- Micromamba
+- Nextflow
+- R
+
+---
+
+### Configuration
+
+Configuration modules customize the workstation after installation.
+
+Examples:
+
+- Git configuration
+- Shell configuration
+- Scientific environments
+- Development tools
+
+---
+
+### Verification
+
+Verification modules ensure that every installed component functions correctly.
+
+Examples:
+
+```
 git --version
 docker --version
 java -version
@@ -113,65 +197,123 @@ micromamba --version
 R --version
 ```
 
-Verification should fail clearly when a required component is missing.
+Verification should fail clearly whenever a required dependency is unavailable.
 
-## 6. Repository structure
+---
 
-```text
+## 7. Environment Manager
+
+Mentat-Core uses Micromamba as its default environment manager.
+
+Its responsibility is to create isolated scientific software environments after the operating system has been provisioned.
+
+Initial environments:
+
+- core
+- quality-control
+- amplicon
+- metagenomics
+- transcriptomics
+
+The first release may implement only the **core** environment.
+
+---
+
+## 8. Repository Structure
+
+```
 mentat-core/
+│
 ├── bootstrap.sh
-├── ansible.cfg
-├── inventory/
+├── README.md
+├── CHANGELOG
+├── docs/
+│   └── architecture.md
+│
+├── lib/
+│   ├── init.sh
+│   ├── logging.sh
+│   ├── checks/
+│   ├── installers/
+│   ├── configuration/
+│   ├── verification/
+│   └── core/
+│
 ├── playbooks/
 ├── roles/
 ├── environments/
-├── scripts/
 ├── tests/
-├── docs/
-└── .github/workflows/
+└── .github/
 ```
 
-## 7. Security boundaries
+---
 
-Mentat-Core must not:
+## 9. Security Boundaries
 
-* Store passwords, API keys or access tokens
-* Store SSH private keys
-* Execute the entire project as root
-* Download and execute unverified remote scripts without inspection
-* Modify unrelated user files
-* Replace existing configuration without warning
-* Install GPU drivers automatically
+Mentat-Core must never:
 
-Administrative privileges should be requested only for tasks that require them.
+- Store passwords
+- Store API keys
+- Store SSH private keys
+- Execute the entire project as root
+- Execute unverified remote scripts
+- Modify unrelated user files
+- Replace existing configurations without warning
+- Install GPU drivers automatically
 
-## 8. Scope for version 0.1
+Administrative privileges should only be requested when required.
 
-Version 0.1 will provide:
+---
 
-* Ubuntu detection
-* Ansible bootstrap
-* Installation of basic system utilities
-* Installation of Git
-* Installation of Micromamba
-* Basic verification
-* Documentation
+## 10. Scope for Version 0.1
 
-Docker, R, Java, Nextflow and bioinformatics environments may be added in later milestones.
+Version 0.1 will include:
 
-## 9. Out of scope
+- Ubuntu verification
+- sudo verification
+- Internet verification
+- Git verification
+- Ansible bootstrap
+- Basic system provisioning
+- Micromamba installation
+- Documentation
 
-The initial project will not include:
+Docker, Java, Nextflow, R and bioinformatics environments will be introduced in later milestones.
 
-* Scientific analysis pipelines
-* Biological databases
-* AlphaFold
-* CUDA or NVIDIA driver installation
-* HPC or SLURM configuration
-* Cloud infrastructure
-* Graphical desktop customization
-* macOS or Windows support
+---
 
-## 10. Definition of success
+## 11. Out of Scope
 
-Mentat-Core will be considered functional when a user can clone the repository on a clean Ubuntu 22.04 LTS or Ubuntu 24.04 LTS installation, run one documented command and obtain a verified working environment without manually installing each dependency.
+The initial release will not include:
+
+- Scientific analysis pipelines
+- Biological databases
+- CUDA installation
+- NVIDIA drivers
+- AlphaFold
+- HPC or SLURM configuration
+- Cloud provisioning
+- Desktop customization
+- macOS support
+- Windows support
+
+---
+
+## 12. Definition of Success
+
+Mentat-Core will be considered successful when a user can:
+
+1. Clone the repository on a clean Ubuntu installation.
+2. Execute a single documented command.
+3. Obtain a fully provisioned and verified bioinformatics workstation.
+4. Begin scientific work without manually installing each dependency.
+
+```
+git clone <repository>
+
+cd mentat-core
+
+./bootstrap.sh
+```
+
+The entire provisioning process should be reproducible, deterministic and maintainable.
