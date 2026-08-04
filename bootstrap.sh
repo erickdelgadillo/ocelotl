@@ -25,6 +25,7 @@ main() {
     verify_sudo
     verify_internet
     verify_git
+    verify_curl
 }
 
 main "$@"

@@ -15,7 +15,7 @@ verify_curl() {
     fi
 
     local curl_version
-    curl_version="$(curl --version | head -n 1)"
+    curl_version="$(curl --version | awk 'NR==1 {print $2}')"
 
-    log_success "${curl_version} detected."
+    log_success "curl ${curl_version} detected."
 }

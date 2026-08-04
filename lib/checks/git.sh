@@ -15,7 +15,7 @@ verify_git() {
     fi
 
     local git_version
-    git_version="$(git --version)"
+    git_version="$(git --version | awk '{print $3}')"
 
-    log_success "${git_version} detected."
+    log_success "Git ${git_version} detected."
 }
