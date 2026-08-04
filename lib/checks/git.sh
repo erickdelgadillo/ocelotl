@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# ----------------------------------------------------------------------
+# verify_git
+#
+# Verify that Git is installed and report its version.
+# ----------------------------------------------------------------------
+
 verify_git() {
     log_info "Checking Git availability..."
 
@@ -9,7 +15,7 @@ verify_git() {
     fi
 
     local git_version
-    git_version="$(git --version)"
+    git_version="$(git --version | awk '{print $3}')"
 
-    log_success "${git_version} detected."
+    log_success "Git ${git_version} detected."
 }

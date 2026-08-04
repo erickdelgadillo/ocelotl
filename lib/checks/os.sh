@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# ----------------------------------------------------------------------
+# verify_os
+#
+# Verify that the operating system is supported by Mentat-Core.
+# ----------------------------------------------------------------------
+
 readonly SUPPORTED_OS="ubuntu"
 readonly SUPPORTED_VERSIONS=("22.04" "24.04")
 

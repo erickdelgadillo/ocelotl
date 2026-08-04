@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# ----------------------------------------------------------------------
+# verify_sudo
+#
+# Verify that sudo is available and the user has administrative privileges.
+# ----------------------------------------------------------------------
+
 verify_sudo() {
     if ! command -v sudo >/dev/null 2>&1; then
         log_error "sudo is not installed."

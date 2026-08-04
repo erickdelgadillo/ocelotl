@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# ----------------------------------------------------------------------
+# Logging functions
+#
+# Provide standardized colored output for Mentat-Core.
+# ----------------------------------------------------------------------
+
 readonly COLOR_RESET="\033[0m"
 
 readonly COLOR_BLUE="\033[34m"
