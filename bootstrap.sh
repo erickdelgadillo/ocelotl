@@ -8,6 +8,7 @@ source "${SCRIPT_DIR}/lib/init.sh"
 main() {
     verify_os
     verify_sudo
+    verify_internet
 }
 
 main "$@"
