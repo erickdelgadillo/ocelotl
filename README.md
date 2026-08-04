@@ -1,12 +1,20 @@
 # Mentat-Core
+------------------------------------------------------------------------------------------------------------------------------------
 
-Automated provisioning of a reproducible Ubuntu workstation for bioinformatics.
+███╗   ███╗███████╗███╗   ██╗████████╗ █████╗ ████████╗
+████╗ ████║██╔════╝████╗  ██║╚══██╔══╝██╔══██╗╚══██╔══╝
+██╔████╔██║█████╗  ██╔██╗ ██║   ██║   ███████║   ██║
+██║╚██╔╝██║██╔══╝  ██║╚██╗██║   ██║   ██╔══██║   ██║
+██║ ╚═╝ ██║███████╗██║ ╚████║   ██║   ██║  ██║   ██║
 
-> Status: Early development
+Mentat-Core v0.1
 
-## Goals
+------------------------------------------------------------------------------------------------------------------------------------
 
-- Reproducible workstation provisioning
-- Modular architecture
-- Automated verification
-- Bioinformatics-ready environment
+> Build a complete, reproducible bioinformatics workstation from a clean Ubuntu installation.
+
+Mentat-Core is a modular provisioning framework designed for computational biology and bioinformatics.
+
+It prepares a Linux workstation from scratch by validating the system, installing essential software, configuring the environment and ensuring reproducibility across research projects.
+
+The project is intended for researchers, bioinformaticians and computational biologists who need a reliable and portable development environment.
