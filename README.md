@@ -6,10 +6,6 @@
 ## Vision
 Every time a researcher joins a new laboratory, they spend hours or days rebuilding the same computational environment. Mentat-Core automates this process through a modular provisioning framework focused on reproducibility, maintainability and portability.
 
-## Why "Mentat"?
-In Frank Herbert's *Dune*, Mentats are humans trained to think with exceptional precision, logic and discipline.
-Mentat-Core follows the same philosophy: every component has a single responsibility, every decision is deliberate, and every environment should be reproducible.
-
 ## Core Principles
 ✓ Reproducible
 ✓ Modular
