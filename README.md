@@ -17,26 +17,44 @@ Mentat-Core follows the same philosophy: every component has a single responsibi
 ✓ Automated
 ✓ Documented
 
-5. Architecture
+## Architecture
 bootstrap.sh
+
         │
+
         ▼
+
 Checks
         │
+
         ├── Operating System
+
         ├── sudo
+
         ├── Internet
+
         ├── Git
+
         └── curl
+
         │
+
         ▼
+
 Installers
+
         │
+
         ▼
+
 Configuration
+
         │
+
         ▼
+
 Verification
+
 
 ## Current Features
 | Feature               | Status |
@@ -52,20 +70,35 @@ Verification
 
 ## Project Structure
 ├── bootstrap.sh
+
 ├── CHANGELOG
+
 ├── docs
+
 │   └── architecture.md
+
 ├── lib
+
 │   ├── checks
+
 │   │   ├── internet.sh
+
 │   │   ├── os.sh
+
 │   │   └── sudo.sh
+
 │   ├── configuration
+
 │   ├── core
+
 │   ├── init.sh
+
 │   ├── installers
+
 │   ├── logging.sh
+
 │   └── verification
+
 └── README.md
 
 ## Installation
@@ -79,15 +112,25 @@ cd mentat-core
 
 ## Development Workflow
 Issue
+
 ↓
+
 Branch
+
 ↓
+
 Development
+
 ↓
+
 Testing
+
 ↓
+
 Review
+
 ↓
+
 Merge
 
 ## Future Vision
