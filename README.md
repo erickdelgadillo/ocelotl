@@ -22,7 +22,7 @@ Every time a researcher joins a new laboratory, they spend hours or days rebuild
 | OS verification       |    ✅   |
 | sudo verification     |    ✅   |
 | Internet verification |    ✅   |
-| Git verification      |    ⏳   |
+| Git verification      |    ✅   |
 | curl verification     |    ⏳   |
 | Install Ansible       |    ⏳   |
 

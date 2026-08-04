@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# ----------------------------------------------------------------------
+# verify_internet
+#
+# Verify Internet connectivity using one or more trusted endpoints.
+# ----------------------------------------------------------------------
+
 readonly CONNECTIVITY_URLS=(
     "https://github.com"
     "https://archive.ubuntu.com"

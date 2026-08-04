@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# ----------------------------------------------------------------------
+# verify_git
+#
+# Verify that Git is installed and report its version.
+# ----------------------------------------------------------------------
+
 verify_git() {
     log_info "Checking Git availability..."
 
