@@ -1,10 +1,10 @@
-# Mentat-Core
+# Ocelotl
 
 ## Hero
 > Build a complete, reproducible bioinformatics workstation from a clean Ubuntu installation.
 
 ## Vision
-Every time a researcher joins a new laboratory, they spend hours or days rebuilding the same computational environment. Mentat-Core automates this process through a modular provisioning framework focused on reproducibility, maintainability and portability.
+Every time a researcher joins a new laboratory, they spend hours or days rebuilding the same computational environment. Ocelotl automates this process through a modular provisioning framework focused on reproducibility, maintainability and portability.
 
 ## Core Principles
 ✓ Reproducible
@@ -23,7 +23,7 @@ Every time a researcher joins a new laboratory, they spend hours or days rebuild
 | sudo verification     |    ✅   |
 | Internet verification |    ✅   |
 | Git verification      |    ✅   |
-| curl verification     |    ⏳   |
+| curl verification     |    ✅   |
 | Install Ansible       |    ⏳   |
 
 ## Roadmap
@@ -33,7 +33,7 @@ Every time a researcher joins a new laboratory, they spend hours or days rebuild
 ## Installation
 git clone ...
 
-cd mentat-core
+cd Ocelotl
 
 ./bootstrap.sh
 
@@ -42,6 +42,6 @@ cd mentat-core
 ## Development Workflow
 
 ## Future Vision
-Mentat-Core is intended to evolve into a complete provisioning framework capable of deploying fully reproducible bioinformatics workstations for research laboratories, HPC environments and cloud infrastructures.
+Ocelotl is intended to evolve into a complete provisioning framework capable of deploying fully reproducible bioinformatics workstations for research laboratories, HPC environments and cloud infrastructures.
 
 ## License

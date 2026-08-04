@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------
 # Logging functions
 #
-# Provide standardized colored output for Mentat-Core.
+# Provide standardized colored output for Ocelotl.
 # ----------------------------------------------------------------------
 
 readonly COLOR_RESET="\033[0m"

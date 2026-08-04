@@ -1,8 +1,8 @@
-# Mentat-Core Architecture
+# Ocelotl Architecture
 
 ## 1. Purpose
 
-Mentat-Core is a modular provisioning framework for bioinformatics workstations.
+Ocelotl is a modular provisioning framework for bioinformatics workstations.
 
 Its goal is to transform a clean Ubuntu installation into a reproducible scientific computing environment using a predictable, testable and extensible architecture.
 
@@ -32,7 +32,7 @@ The following platforms are currently out of scope:
 
 ## 3. Design Philosophy
 
-Mentat-Core follows a simple design philosophy.
+Ocelotl follows a simple design philosophy.
 
 - One module, one responsibility.
 - Validation is separated from installation.
@@ -124,7 +124,7 @@ The bootstrap script orchestrates the provisioning process but does not implemen
 
 Responsibilities:
 
-- Initialize Mentat-Core
+- Initialize Ocelotl
 - Load internal modules
 - Execute system checks
 - Ensure Ansible is available
@@ -203,7 +203,7 @@ Verification should fail clearly whenever a required dependency is unavailable.
 
 ## 7. Environment Manager
 
-Mentat-Core uses Micromamba as its default environment manager.
+Ocelotl uses Micromamba as its default environment manager.
 
 Its responsibility is to create isolated scientific software environments after the operating system has been provisioned.
 
@@ -222,7 +222,7 @@ The first release may implement only the **core** environment.
 ## 8. Repository Structure
 
 ```
-mentat-core/
+Ocelotl/
 │
 ├── bootstrap.sh
 ├── README.md
@@ -250,7 +250,7 @@ mentat-core/
 
 ## 9. Security Boundaries
 
-Mentat-Core must never:
+Ocelotl must never:
 
 - Store passwords
 - Store API keys
@@ -301,7 +301,7 @@ The initial release will not include:
 
 ## 12. Definition of Success
 
-Mentat-Core will be considered successful when a user can:
+Ocelotl will be considered successful when a user can:
 
 1. Clone the repository on a clean Ubuntu installation.
 2. Execute a single documented command.
@@ -311,7 +311,7 @@ Mentat-Core will be considered successful when a user can:
 ```
 git clone <repository>
 
-cd mentat-core
+cd Ocelotl
 
 ./bootstrap.sh
 ```

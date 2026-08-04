@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # ----------------------------------------------------------------------
-# Mentat-Core Bootstrap
+# Ocelotl Bootstrap
 #
-# Entry point of the Mentat-Core provisioning framework.
+# Entry point of the Ocelotl provisioning framework.
 #
 # Responsibilities:
 #   - Load the internal libraries.

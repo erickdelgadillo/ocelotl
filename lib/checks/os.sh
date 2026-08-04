@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------
 # verify_os
 #
-# Verify that the operating system is supported by Mentat-Core.
+# Verify that the operating system is supported by Ocelotl.
 # ----------------------------------------------------------------------
 
 readonly SUPPORTED_OS="ubuntu"
@@ -34,7 +34,7 @@ verify_os() {
     log_info "Detected operating system: ${PRETTY_NAME:-unknown}"
 
     if [[ "${ID:-}" != "$SUPPORTED_OS" ]]; then
-        log_error "Mentat-Core currently supports Ubuntu only."
+        log_error "Ocelotl currently supports Ubuntu only."
         return 1
     fi
 
