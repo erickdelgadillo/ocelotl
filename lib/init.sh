@@ -3,10 +3,10 @@
 # ----------------------------------------------------------------------
 # Initialization
 #
-# Load the internal Mentat-Core libraries required by bootstrap.sh.
+# Load the internal Ocelotl libraries required by bootstrap.sh.
 # ----------------------------------------------------------------------
 
-# Directory containing Mentat-Core's internal Bash library.
+# Directory containing Ocelotl's internal Bash library.
 readonly LIB_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 source "${LIB_DIR}/logging.sh"
