@@ -9,6 +9,7 @@ main() {
     verify_os
     verify_sudo
     verify_internet
+    verify_git
 }
 
 main "$@"
