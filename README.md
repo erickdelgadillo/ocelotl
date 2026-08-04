@@ -18,42 +18,6 @@ Mentat-Core follows the same philosophy: every component has a single responsibi
 ✓ Documented
 
 ## Architecture
-bootstrap.sh
-
-        │
-
-        ▼
-
-Checks
-        │
-
-        ├── Operating System
-
-        ├── sudo
-
-        ├── Internet
-
-        ├── Git
-
-        └── curl
-
-        │
-
-        ▼
-
-Installers
-
-        │
-
-        ▼
-
-Configuration
-
-        │
-
-        ▼
-
-Verification
 
 
 ## Current Features
@@ -69,37 +33,6 @@ Verification
 ## Roadmap
 
 ## Project Structure
-├── bootstrap.sh
-
-├── CHANGELOG
-
-├── docs
-
-│   └── architecture.md
-
-├── lib
-
-│   ├── checks
-
-│   │   ├── internet.sh
-
-│   │   ├── os.sh
-
-│   │   └── sudo.sh
-
-│   ├── configuration
-
-│   ├── core
-
-│   ├── init.sh
-
-│   ├── installers
-
-│   ├── logging.sh
-
-│   └── verification
-
-└── README.md
 
 ## Installation
 git clone ...
@@ -111,27 +44,6 @@ cd mentat-core
 ## Usage
 
 ## Development Workflow
-Issue
-
-↓
-
-Branch
-
-↓
-
-Development
-
-↓
-
-Testing
-
-↓
-
-Review
-
-↓
-
-Merge
 
 ## Future Vision
 Mentat-Core is intended to evolve into a complete provisioning framework capable of deploying fully reproducible bioinformatics workstations for research laboratories, HPC environments and cloud infrastructures.
