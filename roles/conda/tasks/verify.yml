@@ -1,0 +1,12 @@
+---
+- name: Verify Conda executable
+  ansible.builtin.command:
+    argv:
+      - "{{ conda_executable }}"
+      - --version
+  register: conda_version_result
+  changed_when: false
+  check_mode: false
+  failed_when:
+    - conda_version_result.rc != 0
+    - "'conda ' not in conda_version_result.stdout"

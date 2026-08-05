@@ -1,0 +1,14 @@
+---
+- name: Configure Ocelotl workstation
+  hosts: workstation
+
+  roles:
+    - apt
+    - common
+#    - git
+#    - java
+    - conda
+#    - docker
+#    - nextflow
+#    - vscode
+#    - shell

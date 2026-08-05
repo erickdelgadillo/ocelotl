@@ -1,0 +1,9 @@
+---
+- name: Install Conda
+  ansible.builtin.import_tasks: install.yml
+
+- name: Configure Conda
+  ansible.builtin.import_tasks: configure.yml
+
+- name: Verify Conda
+  ansible.builtin.import_tasks: verify.yml

@@ -1,0 +1,49 @@
+---
+- name: Check for an existing Miniconda installation
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/miniconda3/bin/conda"
+  register: miniconda_installation
+
+- name: Check for an existing Miniforge installation
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/miniforge3/bin/conda"
+  register: miniforge_installation
+
+- name: Select existing Conda executable
+  ansible.builtin.set_fact:
+    conda_executable: >-
+      {{
+        (ansible_env.HOME ~ '/miniconda3/bin/conda')
+        if miniconda_installation.stat.exists
+        else
+        (ansible_env.HOME ~ '/miniforge3/bin/conda')
+        if miniforge_installation.stat.exists
+        else
+        ''
+      }}
+
+- name: Determine whether Conda installation is required
+  ansible.builtin.set_fact:
+    conda_installation_required: "{{ conda_executable | length == 0 }}"
+
+- name: Download Miniforge installer
+  ansible.builtin.get_url:
+    url: "{{ conda_installer_url }}"
+    dest: "{{ conda_installer_path }}"
+    mode: "0755"
+  when: conda_executable | length == 0
+
+- name: Install Miniforge
+  ansible.builtin.command:
+    argv:
+      - "{{ conda_installer_path }}"
+      - -b
+      - -p
+      - "{{ conda_install_dir }}"
+    creates: "{{ conda_install_dir }}/bin/conda"
+  when: conda_executable | length == 0
+
+- name: Select installed Miniforge executable
+  ansible.builtin.set_fact:
+    conda_executable: "{{ conda_install_dir }}/bin/conda"
+  when: conda_executable | length == 0

@@ -11,7 +11,17 @@ ensure_ansible() {
         return 0
     fi
 
-    install_ansible
+    log_info "Ansible Core must be installed."
 
-    verify_ansible
+    if ! install_ansible; then
+        log_error "Ansible Core could not be installed."
+        return 1
+    fi
+
+    if ! verify_ansible; then
+        log_error "Ansible Core installation could not be verified."
+        return 1
+    fi
+
+    return 0
 }

@@ -1,0 +1,14 @@
+---
+- name: Install common system packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - ca-certificates
+      - curl
+      - gnupg
+      - software-properties-common
+      - unzip
+      - wget
+      - zip
+    state: present
