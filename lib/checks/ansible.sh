@@ -11,7 +11,8 @@ is_ansible_installed() {
 }
 
 get_ansible_version() {
-    ansible-playbook --version | awk 'NR == 1 {print $3}'
+    ansible-playbook --version |
+        sed -n '1s/.*\[core \([^]]*\)\].*/\1/p'
 }
 
 verify_ansible() {
@@ -24,6 +25,11 @@ verify_ansible() {
 
     local ansible_version
     ansible_version="$(get_ansible_version)"
+
+    if [[ -z "$ansible_version" ]]; then
+        log_error "Unable to determine the Ansible Core version."
+        return 1
+    fi
 
     log_success "Ansible Core ${ansible_version} detected."
 }

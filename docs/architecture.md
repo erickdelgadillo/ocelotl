@@ -163,7 +163,7 @@ Future installers may include:
 
 - Docker
 - Java
-- Micromamba
+- Conda
 - Nextflow
 - R
 
@@ -193,7 +193,7 @@ git --version
 docker --version
 java -version
 nextflow -version
-micromamba --version
+conda --version
 R --version
 ```
 
@@ -203,7 +203,7 @@ Verification should fail clearly whenever a required dependency is unavailable.
 
 ## 7. Environment Manager
 
-Ocelotl uses Micromamba as its default environment manager.
+Ocelotl uses Conda as its default environment manager.
 
 Its responsibility is to create isolated scientific software environments after the operating system has been provisioned.
 
@@ -275,7 +275,7 @@ Version 0.1 will include:
 - Git verification
 - Ansible bootstrap
 - Basic system provisioning
-- Micromamba installation
+- Conda installation
 - Documentation
 
 Docker, Java, Nextflow, R and bioinformatics environments will be introduced in later milestones.
