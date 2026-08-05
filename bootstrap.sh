@@ -26,6 +26,8 @@ main() {
     verify_internet
     verify_git
     verify_curl
+
+    ensure_ansible
 }
 
 main "$@"
