@@ -1,0 +1,39 @@
+---
+- name: Create APT keyrings directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Docker GPG key
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ docker_gpg_key_url }}"
+    dest: "{{ docker_gpg_key_path }}"
+    mode: "0644"
+
+- name: Remove legacy Docker APT sources
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ docker_legacy_apt_sources }}"
+  notify: Update APT package cache
+
+- name: Configure Docker APT repository
+  become: true
+  ansible.builtin.template:
+    src: docker.sources.j2
+    dest: "{{ docker_apt_sources_path }}"
+    mode: "0644"
+  notify: Update APT package cache
+
+- name: Apply pending Docker repository changes
+  ansible.builtin.meta: flush_handlers
+
+- name: Install Docker packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ docker_packages }}"
+    state: present

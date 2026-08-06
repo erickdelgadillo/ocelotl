@@ -1,0 +1,40 @@
+---
+# Docker APT repository
+
+docker_apt_repository: "https://download.docker.com/linux/ubuntu"
+docker_gpg_key_url: "{{ docker_apt_repository }}/gpg"
+docker_gpg_key_path: "/etc/apt/keyrings/docker.asc"
+
+# Docker packages
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+# Docker service
+
+docker_service_name: docker
+
+# Docker group
+
+docker_group: docker
+
+docker_apt_architecture_map:
+  x86_64: amd64
+  aarch64: arm64
+
+docker_apt_architecture: >-
+  {{
+    docker_apt_architecture_map.get(
+      ansible_architecture,
+      ansible_architecture
+    )
+  }}
+
+docker_apt_sources_path: "/etc/apt/sources.list.d/docker.sources"
+
+docker_legacy_apt_sources:
+  - /etc/apt/sources.list.d/docker.list

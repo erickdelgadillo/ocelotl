@@ -24,7 +24,20 @@ Every time a researcher joins a new laboratory, they spend hours or days rebuild
 | Internet verification |    ✅   |
 | Git verification      |    ✅   |
 | curl verification     |    ✅   |
-| Install Ansible       |    ⏳   |
+| Install Ansible       |    ✅   |
+
+
+## Current implemented roles
+| roles                 | Status |
+| --------------------- | :----: |
+| apt                   |    ✅   |
+| apt                   |    ✅   |
+| common                |    ✅   |
+| conda                 |    ✅   |
+| java                  |    ✅   |
+| Docker                |    ⏳   |
+| Nextflow              |    ⏳   |
+
 
 ## Roadmap
 

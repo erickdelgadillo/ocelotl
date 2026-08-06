@@ -8,7 +8,7 @@
 #    - git
     - conda
     - java
-#    - docker
+    - docker
 #    - nextflow
 #    - vscode
 #    - shell
