@@ -10,6 +10,7 @@ conda_channel_priority: strict
 conda_channels:
   - conda-forge
   - bioconda
+  - defaults
 
 conda_miniforge_version: "latest"
 conda_installer_name: "Miniforge3-Linux-{{ ansible_architecture }}.sh"

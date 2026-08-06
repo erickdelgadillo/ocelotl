@@ -10,3 +10,48 @@
   failed_when:
     - conda_version_result.rc != 0
     - "'conda ' not in conda_version_result.stdout"
+
+- name: Read effective Conda configuration
+  ansible.builtin.command:
+    argv:
+      - "{{ conda_executable }}"
+      - config
+      - --show
+      - channels
+      - channel_priority
+      - solver
+      - --json
+  register: conda_configuration_result
+  changed_when: false
+  check_mode: false
+
+- name: Parse effective Conda configuration
+  ansible.builtin.set_fact:
+    conda_effective_configuration: "{{ conda_configuration_result.stdout | from_json }}"
+
+- name: Verify Conda solver
+  ansible.builtin.assert:
+    that:
+      - conda_effective_configuration.solver == conda_solver
+    fail_msg: >-
+      Expected Conda solver '{{ conda_solver }}',
+      but detected '{{ conda_effective_configuration.solver }}'.
+    success_msg: "Conda solver is configured correctly."
+
+- name: Verify Conda channel priority
+  ansible.builtin.assert:
+    that:
+      - conda_effective_configuration.channel_priority == conda_channel_priority
+    fail_msg: >-
+      Expected channel priority '{{ conda_channel_priority }}',
+      but detected '{{ conda_effective_configuration.channel_priority }}'.
+    success_msg: "Conda channel priority is configured correctly."
+
+- name: Verify Conda channels
+  ansible.builtin.assert:
+    that:
+      - conda_effective_configuration.channels == conda_channels
+    fail_msg: >-
+      Expected Conda channels {{ conda_channels }},
+      but detected {{ conda_effective_configuration.channels }}.
+    success_msg: "Conda channels are configured correctly."

@@ -1,0 +1,7 @@
+channels:
+{% for channel in conda_channels %}
+  - {{ channel }}
+{% endfor %}
+
+channel_priority: {{ conda_channel_priority }}
+solver: {{ conda_solver }}

@@ -1,21 +1,7 @@
 ---
-- name: Read current Conda solver
-  ansible.builtin.command:
-    argv:
-      - "{{ conda_executable }}"
-      - config
-      - --show
-      - solver
-  register: current_conda_solver
-  changed_when: false
-  check_mode: false
-
-- name: Configure Conda solver
-  ansible.builtin.command:
-    argv:
-      - "{{ conda_executable }}"
-      - config
-      - --set
-      - solver
-      - "{{ conda_solver }}"
-  when: conda_solver not in current_conda_solver.stdout
+- name: Configure Conda
+  ansible.builtin.template:
+    src: condarc.j2
+    dest: "{{ ansible_env.HOME }}/.condarc"
+    mode: "0644"
+    backup: true

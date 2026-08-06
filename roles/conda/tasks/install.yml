@@ -47,3 +47,9 @@
   ansible.builtin.set_fact:
     conda_executable: "{{ conda_install_dir }}/bin/conda"
   when: conda_executable | length == 0
+
+- name: Remove Miniforge installer
+  ansible.builtin.file:
+    path: "{{ conda_installer_path }}"
+    state: absent
+  when: conda_installation_required
