@@ -9,6 +9,6 @@
     - conda
     - java
     - docker
-#    - nextflow
+    - nextflow
 #    - vscode
 #    - shell

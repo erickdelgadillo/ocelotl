@@ -1,0 +1,8 @@
+---
+# Nextflow
+
+nextflow_version: latest
+
+nextflow_download_url: "https://github.com/nextflow-io/nextflow/releases/latest/download/nextflow"
+
+nextflow_install_path: "/usr/local/bin/nextflow"

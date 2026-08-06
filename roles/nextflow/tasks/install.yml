@@ -1,0 +1,7 @@
+---
+- name: Download Nextflow launcher
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ nextflow_download_url }}"
+    dest: "{{ nextflow_install_path }}"
+    mode: "0755"
