@@ -344,3 +344,23 @@ verify.yml
 - Verify channels
 - Verify solver
 - Verify channel priority
+
+
+Role dependencies
+
+common
+├── apt
+
+conda
+├── common
+
+docker
+├── common
+
+java
+├── common
+
+nextflow
+├── java
+├── docker
+└── conda
