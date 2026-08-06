@@ -1,0 +1,6 @@
+---
+- name: Install Nextflow
+  ansible.builtin.import_tasks: install.yml
+
+- name: Verify Nextflow
+  ansible.builtin.import_tasks: verify.yml

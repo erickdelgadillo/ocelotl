@@ -1,0 +1,20 @@
+---
+- name: Read Nextflow version
+  ansible.builtin.command:
+    argv:
+      - "{{ nextflow_install_path }}"
+      - -version
+  register: nextflow_version_result
+  changed_when: false
+  check_mode: false
+
+- name: Verify Nextflow CLI
+  ansible.builtin.assert:
+    that:
+      - nextflow_version_result.rc == 0
+      - "'N E X T F L O W' in nextflow_version_result.stdout"
+      - "'version' in nextflow_version_result.stdout"
+    fail_msg: >-
+      Nextflow CLI is not available or did not return the expected output.
+    success_msg: >-
+      Nextflow CLI is installed correctly.
