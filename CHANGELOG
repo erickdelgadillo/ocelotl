@@ -1,5 +1,16 @@
-# Changelog
+# Ocelotl v1.0.0
 
-## [Unreleased]
+## Features
 
-Initial project structure.
+- Modular Ansible architecture
+- Conda installation and verification
+- Java installation and verification
+- Docker installation and verification
+- Nextflow installation and verification
+- Idempotent provisioning
+- Official repositories
+- Modular verification system
+
+## Notes
+
+First stable release.

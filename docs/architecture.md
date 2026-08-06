@@ -1,4 +1,4 @@
-# Ocelotl Architecture
+# Ocelotl Architecture Guide
 
 ## 1. Purpose
 
@@ -12,7 +12,7 @@ The project minimizes manual configuration while promoting reproducibility, main
 
 ## 2. Target Platform
 
-The initial supported platform is:
+Current supported platform:
 
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
@@ -20,7 +20,7 @@ The initial supported platform is:
 - Local workstation
 - User with sudo privileges
 
-The following platforms are currently out of scope:
+Currently out of scope:
 
 - Other Linux distributions
 - macOS
@@ -32,194 +32,203 @@ The following platforms are currently out of scope:
 
 ## 3. Design Philosophy
 
-Ocelotl follows a simple design philosophy.
+Every component in Ocelotl follows the same design principles.
 
-- One module, one responsibility.
-- Validation is separated from installation.
-- Installation is separated from configuration.
-- Configuration is separated from verification.
-
-Every component should be:
-
+- Single responsibility
 - Reproducible
 - Idempotent
 - Modular
+- Self-contained
+- Verifiable
 - Testable
 - Transparent
 - Safe to execute repeatedly
 - Easy to extend
 
-The framework should avoid unnecessary global installations and clearly separate workstation provisioning from scientific workflows.
+The project deliberately separates installation, configuration and verification in order to simplify maintenance and future development.
 
 ---
 
-## 4. High-Level Workflow
+## 4. Provisioning Workflow
 
 ```
 Clean Ubuntu Installation
-          │
-          ▼
-     bootstrap.sh
-          │
-          ▼
-       Checks
-          │
-          ▼
- Install / Verify Ansible
-          │
-          ▼
-   Execute Playbooks
-          │
-          ▼
-    Configuration
-          │
-          ▼
-     Verification
-          │
-          ▼
- Bioinformatics Workstation
+            │
+            ▼
+      bootstrap.sh
+            │
+            ▼
+   Bootstrap Validation
+            │
+            ▼
+     Ensure Ansible
+            │
+            ▼
+ Execute workstation.yml
+            │
+            ▼
+──────────── Roles ────────────
+
+install
+      │
+configure
+      │
+verify
+
+───────────────────────────────
+            │
+            ▼
+Provisioned Bioinformatics Workstation
 ```
 
 ---
 
-## 5. Internal Architecture
+## 5. Role Lifecycle
+
+Every role follows the same lifecycle.
 
 ```
-bootstrap.sh
-        │
-        ▼
-lib/init.sh
-        │
-        ▼
-──────────────────────────────────
-
-Checks
-│
-├── Operating System
-├── sudo
-├── Internet
-├── Git
-└── curl
-
-↓
-
-Installers
-
-↓
-
-Configuration
-
-↓
-
-Verification
+defaults
+      │
+      ▼
+install
+      │
+      ▼
+configure
+      │
+      ▼
+verify
 ```
 
-The bootstrap script orchestrates the provisioning process but does not implement installation logic directly.
+### defaults
+
+Contains every configurable parameter used by the role.
+
+Examples:
+
+- package names
+- installation paths
+- URLs
+- versions
+- service names
+
+No hardcoded values should appear inside tasks whenever possible.
 
 ---
 
-## 6. Main Components
+### install
 
-### bootstrap.sh
+Responsible only for installing software.
+
+Responsibilities include:
+
+- Downloading files
+- Installing packages
+- Creating directories
+- Adding repositories
+
+Installation should never perform configuration.
+
+---
+
+### configure
+
+Responsible only for configuring installed software.
+
+Examples:
+
+- Generate configuration files
+- Enable services
+- Configure user permissions
+- Configure environment variables
+
+Configuration should never install software.
+
+---
+
+### verify
+
+Responsible only for demonstrating that the role completed successfully.
+
+Typical workflow:
+
+```
+Read
+    ↓
+Register
+    ↓
+Assert
+```
+
+Verification never modifies the system.
+
+Every verification should clearly report success or failure.
+
+---
+
+## 6. Bootstrap Responsibilities
+
+The bootstrap layer exists only to prepare the system for Ansible.
 
 Responsibilities:
 
 - Initialize Ocelotl
-- Load internal modules
-- Execute system checks
-- Ensure Ansible is available
+- Load internal Bash modules
+- Execute prerequisite checks
+- Install Ansible when necessary
 - Launch the provisioning playbook
 - Exit gracefully on failure
 
-The bootstrap script should remain small and contain only orchestration logic.
+The bootstrap script should remain small and contain orchestration logic only.
 
 ---
 
-### Checks
+## 7. Checks
 
-Checks validate that the system is ready before any installation begins.
+Bootstrap checks validate that the machine is ready before provisioning begins.
 
-Examples:
+Current checks include:
 
-- Verify supported operating system
-- Verify sudo privileges
-- Verify Internet connectivity
-- Verify Git availability
-- Verify required utilities
+- Supported operating system
+- sudo privileges
+- Internet connectivity
+- Git availability
+- curl availability
 
 Checks never modify the system.
 
 ---
 
-### Installers
-
-Installers prepare the software required to provision the workstation.
-
-Initially:
-
-- Ansible
-
-Future installers may include:
-
-- Docker
-- Java
-- Conda
-- Nextflow
-- R
-
----
-
-### Configuration
-
-Configuration modules customize the workstation after installation.
-
-Examples:
-
-- Git configuration
-- Shell configuration
-- Scientific environments
-- Development tools
-
----
-
-### Verification
-
-Verification modules ensure that every installed component functions correctly.
-
-Examples:
+## 8. Current Role Dependencies
 
 ```
-git --version
-docker --version
-java -version
-nextflow -version
-conda --version
-R --version
+common
+│
+├── apt
+
+conda
+│
+└── common
+
+java
+│
+└── common
+
+docker
+│
+└── common
+
+nextflow
+├── java
+├── docker
+└── conda
 ```
 
-Verification should fail clearly whenever a required dependency is unavailable.
+Dependencies should remain explicit and minimal.
 
 ---
 
-## 7. Environment Manager
-
-Ocelotl uses Conda as its default environment manager.
-
-Its responsibility is to create isolated scientific software environments after the operating system has been provisioned.
-
-Initial environments:
-
-- core
-- quality-control
-- amplicon
-- metagenomics
-- transcriptomics
-
-The first release may implement only the **core** environment.
-
----
-
-## 8. Repository Structure
+## 9. Repository Structure
 
 ```
 Ocelotl/
@@ -231,24 +240,31 @@ Ocelotl/
 │   └── architecture.md
 │
 ├── lib/
-│   ├── init.sh
-│   ├── logging.sh
 │   ├── checks/
+│   ├── core/
 │   ├── installers/
 │   ├── configuration/
 │   ├── verification/
-│   └── core/
+│   ├── init.sh
+│   └── logging.sh
 │
+├── inventory/
 ├── playbooks/
+│
 ├── roles/
-├── environments/
-├── tests/
-└── .github/
+│   ├── common/
+│   ├── conda/
+│   ├── java/
+│   ├── docker/
+│   ├── nextflow/
+│   └── ...
+│
+└── ansible.cfg
 ```
 
 ---
 
-## 9. Security Boundaries
+## 10. Security Principles
 
 Ocelotl must never:
 
@@ -258,109 +274,62 @@ Ocelotl must never:
 - Execute the entire project as root
 - Execute unverified remote scripts
 - Modify unrelated user files
-- Replace existing configurations without warning
+- Replace existing user configurations without warning
 - Install GPU drivers automatically
 
 Administrative privileges should only be requested when required.
 
 ---
 
-## 10. Scope for Version 0.1
+## 11. Scope of Version 1.0
 
-Version 0.1 will include:
+Version 1.0 provides:
 
-- Ubuntu verification
-- sudo verification
-- Internet verification
-- Git verification
-- Ansible bootstrap
-- Basic system provisioning
-- Conda installation
-- Documentation
-
-Docker, Java, Nextflow, R and bioinformatics environments will be introduced in later milestones.
+- Bootstrap framework
+- Automatic Ansible installation
+- Common package installation
+- Conda installation and configuration
+- Java installation
+- Docker installation and configuration
+- Nextflow installation
+- Verification framework
+- Modular role architecture
+- Project documentation
 
 ---
 
-## 11. Out of Scope
+## 12. Out of Scope
 
-The initial release will not include:
+Future releases may include:
 
-- Scientific analysis pipelines
-- Biological databases
-- CUDA installation
+- Git configuration
+- VS Code configuration
+- Shell customization
+- R
+- Bioinformatics Conda environments
+- Apptainer / Singularity
+- CUDA
 - NVIDIA drivers
-- AlphaFold
-- HPC or SLURM configuration
+- HPC / SLURM support
 - Cloud provisioning
-- Desktop customization
-- macOS support
-- Windows support
 
 ---
 
-## 12. Definition of Success
+## 13. Definition of Success
 
-Ocelotl will be considered successful when a user can:
+Ocelotl is considered successful when a user can:
 
 1. Clone the repository on a clean Ubuntu installation.
 2. Execute a single documented command.
 3. Obtain a fully provisioned and verified bioinformatics workstation.
 4. Begin scientific work without manually installing each dependency.
 
-```
+```bash
 git clone <repository>
 
-cd Ocelotl
+cd ocelotl
 
 ./bootstrap.sh
 ```
 
-The entire provisioning process should be reproducible, deterministic and maintainable.
-
-
-
-
-
-Role: conda
-
-install.yml
-------------
-- Detect existing installation
-- Decide whether installation is required
-- Download installer
-- Install Miniforge
-- Remove installer
-
-configure.yml
--------------
-- Generate .condarc
-- Configure channels
-- Configure solver
-
-verify.yml
-----------
-- Verify executable
-- Verify channels
-- Verify solver
-- Verify channel priority
-
-
-Role dependencies
-
-common
-├── apt
-
-conda
-├── common
-
-docker
-├── common
-
-java
-├── common
-
-nextflow
-├── java
-├── docker
-└── conda
+The complete provisioning process must be reproducible, deterministic, maintainable and safe to execute repeatedly.
