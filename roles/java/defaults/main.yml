@@ -1,0 +1,9 @@
+---
+# Java version that Ocelotl installs on clean systems
+java_package_version: "21"
+
+# Minimum Java version accepted by Ocelotl
+java_minimum_version: "17"
+
+# APT package
+java_package: "openjdk-{{ java_package_version }}-jdk"

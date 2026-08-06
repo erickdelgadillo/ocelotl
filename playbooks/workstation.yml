@@ -6,8 +6,8 @@
     - apt
     - common
 #    - git
-#    - java
     - conda
+    - java
 #    - docker
 #    - nextflow
 #    - vscode
