@@ -317,3 +317,30 @@ cd Ocelotl
 ```
 
 The entire provisioning process should be reproducible, deterministic and maintainable.
+
+
+
+
+
+Role: conda
+
+install.yml
+------------
+- Detect existing installation
+- Decide whether installation is required
+- Download installer
+- Install Miniforge
+- Remove installer
+
+configure.yml
+-------------
+- Generate .condarc
+- Configure channels
+- Configure solver
+
+verify.yml
+----------
+- Verify executable
+- Verify channels
+- Verify solver
+- Verify channel priority
