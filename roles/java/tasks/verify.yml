@@ -1,0 +1,32 @@
+---
+- name: Read active Java version
+  ansible.builtin.command:
+    argv:
+      - java
+      - -version
+  register: java_version_result
+  changed_when: false
+  check_mode: false
+
+- name: Extract active Java major version
+  ansible.builtin.set_fact:
+    java_active_major_version: >-
+      {{
+        (
+          java_version_result.stderr
+          | regex_search('version "([0-9]+)', '\1')
+          | first
+        )
+        | int
+      }}
+
+- name: Verify active Java version
+  ansible.builtin.assert:
+    that:
+      - (java_active_major_version | int) >= (java_minimum_version | int)
+    fail_msg: >-
+      Java {{ java_active_major_version }} is active, but Ocelotl requires
+      Java {{ java_minimum_version }} or newer.
+    success_msg: >-
+      Active Java {{ java_active_major_version }} satisfies the minimum
+      requirement.

@@ -1,0 +1,6 @@
+---
+- name: Install Java
+  ansible.builtin.import_tasks: install.yml
+
+- name: Verify Java
+  ansible.builtin.import_tasks: verify.yml
