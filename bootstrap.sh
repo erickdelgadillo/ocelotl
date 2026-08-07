@@ -8,6 +8,7 @@
 # Responsibilities:
 #   - Load the internal libraries.
 #   - Execute system checks.
+#   - Ensure Ansible is available.
 #   - Start the provisioning workflow.
 # ----------------------------------------------------------------------
 
@@ -28,6 +29,8 @@ main() {
     verify_curl
 
     ensure_ansible
+
+    run_workstation_playbook
 }
 
 main "$@"
