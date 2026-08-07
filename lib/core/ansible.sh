@@ -25,3 +25,19 @@ ensure_ansible() {
 
     return 0
 }
+
+# ----------------------------------------------------------------------
+# run_workstation_playbook
+#
+# Execute the main Ocelotl provisioning playbook.
+# ----------------------------------------------------------------------
+
+run_workstation_playbook() {
+    log_info "Starting workstation provisioning..."
+
+    ANSIBLE_CONFIG="${SCRIPT_DIR}/ansible.cfg" \
+        ansible-playbook \
+        -i "${SCRIPT_DIR}/inventory/localhost.ini" \
+        "${SCRIPT_DIR}/playbooks/workstation.yml" \
+        --ask-become-pass
+}
