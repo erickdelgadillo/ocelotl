@@ -1,4 +1,16 @@
 ---
+- name: Reload systemd configuration
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start Docker socket
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ docker_socket_name }}"
+    enabled: true
+    state: started
+
 - name: Enable and start Docker service
   become: true
   ansible.builtin.systemd:
