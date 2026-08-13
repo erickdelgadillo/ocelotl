@@ -1,0 +1,149 @@
+---
+# =============================================================================
+# Ocelotl - R role defaults
+# =============================================================================
+
+# Install RStudio Desktop when it is not already present.
+r_install_rstudio: true
+
+# RStudio Desktop version installed by Ocelotl on clean systems.
+r_rstudio_version: "2026.07.1-147"
+
+# Official Posit package for Ubuntu 22.04 / 24.04.
+r_rstudio_deb_url: >-
+  https://download1.rstudio.org/electron/jammy/amd64/rstudio-{{ r_rstudio_version }}-amd64.deb
+
+# Default CRAN repository.
+r_cran_repo: "https://cloud.r-project.org"
+
+
+# -----------------------------------------------------------------------------
+# Ubuntu system dependencies
+#
+# Required to compile/install common scientific R packages.
+# Add new Linux dependencies here when necessary.
+# -----------------------------------------------------------------------------
+
+r_system_packages:
+  - build-essential
+  - cmake
+  - libcurl4-openssl-dev
+  - libssl-dev
+  - libxml2-dev
+  - libuv1-dev
+  - libfontconfig1-dev
+  - libfreetype6-dev
+  - libharfbuzz-dev
+  - libfribidi-dev
+  - libmagick++-dev
+  - libudunits2-dev
+  - libgdal-dev
+  - libgeos-dev
+  - libproj-dev
+  - xz-utils
+
+# -----------------------------------------------------------------------------
+# CRAN packages
+#
+# To add another CRAN package in the future:
+#
+#   - package_name
+#
+# No changes to the installation logic should be necessary.
+# -----------------------------------------------------------------------------
+
+r_cran_packages:
+  # R infrastructure
+  - BiocManager
+  - remotes
+  - devtools
+  - renv
+
+  # Data manipulation
+  - readr
+  - dplyr
+  - tidyr
+  - purrr
+  - stringr
+  - tibble
+  - data.table
+  - dtplyr
+  - reshape2
+
+  # Plotting
+  - ggplot2
+  - ggthemes
+  - ggh4x
+  - ggpattern
+  - ggforce
+  - patchwork
+  - cowplot
+  - ggpmisc
+  - RColorBrewer
+  - viridis
+  - gridExtra
+  - plotrix
+  - gg.gap
+
+  # Data import / export
+  - readxl
+  - arrow
+  - feather
+
+  # Statistics / ecology
+  - vegan
+  - Hmisc
+
+  # Interactive / reporting
+  - DT
+  - plotly
+  - knitr
+
+  # Other utilities
+  - VennDiagram
+  - circlize
+  - magick
+  - grateful
+  - gapminder
+  - webshot
+
+
+# -----------------------------------------------------------------------------
+# Bioconductor packages
+#
+# Installed with BiocManager::install().
+# -----------------------------------------------------------------------------
+
+# Bioconductor mirrors used in order.
+# Ocelotl falls back to the next mirror if installation fails.
+r_bioc_mirrors:
+  - "https://bioconductor.org"
+  - "https://bioconductor.statistik.tu-dortmund.de"
+
+r_bioconductor_packages:
+  - edgeR
+  - ComplexHeatmap
+  - ALDEx2
+
+
+# -----------------------------------------------------------------------------
+# GitHub packages
+#
+# "name" is the R package name used for detection/validation.
+# "repo" is passed to remotes::install_github().
+#
+# Nested GitHub packages such as CoDaSeq are supported.
+# -----------------------------------------------------------------------------
+
+r_github_packages:
+  - name: kfigr
+    repo: "mkoohafkan/kfigr"
+
+  - name: ggbiplot
+    repo: "vqv/ggbiplot"
+
+  - name: CoDaSeq
+    repo: "ggloor/CoDaSeq/CoDaSeq"
+
+  - name: ggord
+    repo: "fawda123/ggord"

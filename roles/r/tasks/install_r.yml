@@ -1,0 +1,82 @@
+---
+# =============================================================================
+# Ocelotl - Install or detect R
+# =============================================================================
+
+- name: Check whether R is already installed
+  ansible.builtin.command: R --version
+  register: r_check
+  changed_when: false
+  failed_when: false
+
+
+# -----------------------------------------------------------------------------
+# Existing R installation
+# -----------------------------------------------------------------------------
+
+- name: Report existing R installation
+  ansible.builtin.debug:
+    msg: "{{ r_check.stdout_lines[0] }}"
+  when: r_check.rc == 0
+
+
+# -----------------------------------------------------------------------------
+# Clean system: install R from CRAN
+# -----------------------------------------------------------------------------
+
+- name: Install packages required for the CRAN repository
+  become: true
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - gnupg
+      - wget
+    state: present
+    update_cache: true
+  when: r_check.rc != 0
+
+
+- name: Add CRAN signing key
+  become: true
+  ansible.builtin.get_url:
+    url: "https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc"
+    dest: "/etc/apt/trusted.gpg.d/cran_ubuntu_key.asc"
+    mode: "0644"
+  when: r_check.rc != 0
+
+
+- name: Add CRAN Ubuntu repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb https://cloud.r-project.org/bin/linux/ubuntu
+      {{ ansible_distribution_release }}-cran40/
+    filename: cran-r
+    state: present
+    update_cache: true
+  when: r_check.rc != 0
+
+
+- name: Install R and R development files
+  become: true
+  ansible.builtin.apt:
+    name:
+      - r-base
+      - r-base-dev
+    state: present
+  when: r_check.rc != 0
+
+
+# -----------------------------------------------------------------------------
+# Verify R after installation/detection
+# -----------------------------------------------------------------------------
+
+- name: Get installed R version
+  ansible.builtin.command: R --version
+  register: r_version
+  changed_when: false
+
+
+- name: Report R version
+  ansible.builtin.debug:
+    msg: "{{ r_version.stdout_lines[0] }}"

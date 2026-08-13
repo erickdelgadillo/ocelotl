@@ -1,0 +1,26 @@
+---
+# =============================================================================
+# Ocelotl - R role
+# =============================================================================
+
+- name: Install R system dependencies
+  ansible.builtin.import_tasks: system_deps.yml
+
+- name: Install or detect R
+  ansible.builtin.import_tasks: install_r.yml
+
+- name: Install or detect RStudio
+  ansible.builtin.import_tasks: install_rstudio.yml
+  when: r_install_rstudio | bool
+
+- name: Install CRAN packages
+  ansible.builtin.import_tasks: cran.yml
+
+- name: Install Bioconductor packages
+  ansible.builtin.import_tasks: bioconductor.yml
+
+- name: Install GitHub R packages
+  ansible.builtin.import_tasks: github.yml
+
+- name: Verify R environment
+  ansible.builtin.import_tasks: verify.yml

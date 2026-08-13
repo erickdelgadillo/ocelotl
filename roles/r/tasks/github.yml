@@ -1,0 +1,90 @@
+---
+# =============================================================================
+# Ocelotl - GitHub R packages
+# =============================================================================
+
+- name: Install missing GitHub R packages
+  ansible.builtin.shell: |
+    Rscript --vanilla - <<'RSCRIPT'
+
+    if (!requireNamespace("remotes", quietly = TRUE)) {
+      stop("The remotes package is not installed.")
+    }
+
+    user_lib <- path.expand(Sys.getenv("R_LIBS_USER"))
+
+    if (!nzchar(user_lib)) {
+      stop("R_LIBS_USER could not be determined.")
+    }
+
+    if (!dir.exists(user_lib)) {
+      dir.create(
+        user_lib,
+        recursive = TRUE,
+        showWarnings = FALSE
+      )
+    }
+
+    .libPaths(c(user_lib, .libPaths()))
+
+    github_packages <- list(
+    {% for item in r_github_packages %}
+      list(
+        name = "{{ item.name }}",
+        repo = "{{ item.repo }}"
+      ){% if not loop.last %},{% endif %}
+    {% endfor %}
+    )
+
+    changed <- FALSE
+
+    for (pkg in github_packages) {
+
+      if (requireNamespace(pkg$name, quietly = TRUE)) {
+        cat("Already installed:", pkg$name, "\n")
+        next
+      }
+
+      cat(
+        "Installing",
+        pkg$name,
+        "from",
+        pkg$repo,
+        "\n"
+      )
+
+      remotes::install_github(
+        pkg$repo,
+        lib = user_lib,
+        dependencies = NA,
+        upgrade = "never"
+      )
+
+      if (!requireNamespace(pkg$name, quietly = TRUE)) {
+        stop(
+          paste(
+            "Failed to install GitHub package:",
+            pkg$name
+          )
+        )
+      }
+
+      changed <- TRUE
+    }
+
+    if (changed) {
+      cat("OCELOTL_GITHUB_CHANGED=true\n")
+    } else {
+      cat("OCELOTL_GITHUB_CHANGED=false\n")
+    }
+
+    RSCRIPT
+  args:
+    executable: /bin/bash
+  register: r_github_install
+  changed_when: "'OCELOTL_GITHUB_CHANGED=true' in r_github_install.stdout"
+
+
+- name: Report GitHub package status
+  ansible.builtin.debug:
+    msg: "{{ r_github_install.stdout_lines }}"

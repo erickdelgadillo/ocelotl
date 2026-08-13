@@ -1,0 +1,6 @@
+---
+- name: Configure R environment
+  hosts: workstation
+
+  roles:
+    - r
