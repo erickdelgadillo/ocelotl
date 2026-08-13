@@ -1,0 +1,161 @@
+---
+# =============================================================================
+# Ocelotl - Verify R environment
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Verify R
+# -----------------------------------------------------------------------------
+
+- name: Verify R installation
+  ansible.builtin.command: R --version
+  register: r_verify
+  changed_when: false
+
+
+- name: Report R version
+  ansible.builtin.debug:
+    msg: "✓ {{ r_verify.stdout_lines[0] }}"
+
+
+# -----------------------------------------------------------------------------
+# Verify RStudio
+# -----------------------------------------------------------------------------
+
+- name: Verify RStudio installation
+  ansible.builtin.command: rstudio --version
+  register: rstudio_verify
+  changed_when: false
+  when: r_install_rstudio | bool
+
+
+- name: Report RStudio version
+  ansible.builtin.debug:
+    msg: "✓ {{ rstudio_verify.stdout_lines[0] }}"
+  when: r_install_rstudio | bool
+
+
+# -----------------------------------------------------------------------------
+# Verify R packages
+# -----------------------------------------------------------------------------
+
+- name: Verify all requested R packages
+  ansible.builtin.shell: |
+    Rscript --vanilla - <<'RSCRIPT'
+
+    cran_packages <- c(
+    {% for package in r_cran_packages %}
+      "{{ package }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    )
+
+    bioconductor_packages <- c(
+    {% for package in r_bioconductor_packages %}
+      "{{ package }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    )
+
+    github_packages <- c(
+    {% for item in r_github_packages %}
+      "{{ item.name }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    )
+
+    # Packages distributed with R itself that Ocelotl expects.
+    base_packages <- c(
+      "grid"
+    )
+
+    packages <- unique(
+      c(
+        base_packages,
+        cran_packages,
+        bioconductor_packages,
+        github_packages
+      )
+    )
+
+
+    # -------------------------------------------------------------------------
+    # Detect availability
+    # -------------------------------------------------------------------------
+
+    available <- vapply(
+      packages,
+      requireNamespace,
+      logical(1),
+      quietly = TRUE
+    )
+
+    missing <- packages[!available]
+
+
+    # -------------------------------------------------------------------------
+    # Report installed packages and versions
+    # -------------------------------------------------------------------------
+
+    cat("\nOcelotl R environment\n")
+    cat("=====================\n\n")
+
+    for (package in packages[available]) {
+
+      version <- as.character(
+        packageVersion(package)
+      )
+
+      cat(
+        sprintf(
+          "  [OK] %-20s %s\n",
+          package,
+          version
+        )
+      )
+    }
+
+
+    # -------------------------------------------------------------------------
+    # Fail if anything is missing
+    # -------------------------------------------------------------------------
+
+    if (length(missing) > 0) {
+
+      cat("\nMissing packages:\n")
+
+      for (package in missing) {
+        cat("  [FAIL]", package, "\n")
+      }
+
+      stop(
+        paste(
+          "R environment validation failed. Missing packages:",
+          paste(missing, collapse = ", ")
+        )
+      )
+    }
+
+
+    # -------------------------------------------------------------------------
+    # Summary
+    # -------------------------------------------------------------------------
+
+    cat("\n")
+    cat(
+      "Validation successful:",
+      length(packages),
+      "/",
+      length(packages),
+      "packages available.\n"
+    )
+
+    cat("OCELOTL_R_VALIDATION=success\n")
+
+    RSCRIPT
+  args:
+    executable: /bin/bash
+  register: r_package_verify
+  changed_when: false
+
+
+- name: Report R package validation
+  ansible.builtin.debug:
+    msg: "{{ r_package_verify.stdout_lines }}"

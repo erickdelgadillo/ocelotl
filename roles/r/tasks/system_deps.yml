@@ -1,0 +1,11 @@
+---
+# =============================================================================
+# Ocelotl - R system dependencies
+# =============================================================================
+
+- name: Install system dependencies required by R packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ r_system_packages }}"
+    state: present
+    update_cache: true

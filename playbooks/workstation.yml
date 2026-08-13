@@ -6,6 +6,7 @@
     - apt
     - common
 #    - git
+    - r
     - conda
     - java
     - docker

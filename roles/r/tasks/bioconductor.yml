@@ -1,0 +1,191 @@
+---
+# =============================================================================
+# Ocelotl - Bioconductor packages
+# =============================================================================
+
+- name: Install missing Bioconductor packages
+  ansible.builtin.shell: |
+    Rscript --vanilla - <<'RSCRIPT'
+
+    options(
+      repos = c(CRAN = "{{ r_cran_repo }}"),
+      download.file.method = "libcurl"
+    )
+
+    packages <- c(
+    {% for package in r_bioconductor_packages %}
+      "{{ package }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    )
+
+    mirrors <- c(
+    {% for mirror in r_bioc_mirrors %}
+      "{{ mirror }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    )
+
+
+    # -------------------------------------------------------------------------
+    # Check BiocManager
+    # -------------------------------------------------------------------------
+
+    if (!requireNamespace("BiocManager", quietly = TRUE)) {
+      stop(
+        "BiocManager is not installed. "
+      )
+    }
+
+
+    # -------------------------------------------------------------------------
+    # User R library
+    # -------------------------------------------------------------------------
+
+    user_lib <- path.expand(Sys.getenv("R_LIBS_USER"))
+
+    if (!nzchar(user_lib)) {
+      stop("R_LIBS_USER could not be determined.")
+    }
+
+    if (!dir.exists(user_lib)) {
+      dir.create(
+        user_lib,
+        recursive = TRUE,
+        showWarnings = FALSE
+      )
+    }
+
+    .libPaths(c(user_lib, .libPaths()))
+
+
+    # -------------------------------------------------------------------------
+    # Detect missing packages
+    # -------------------------------------------------------------------------
+
+    package_available <- function(package) {
+      requireNamespace(
+        package,
+        quietly = TRUE
+      )
+    }
+
+    missing <- packages[
+      !vapply(
+        packages,
+        package_available,
+        logical(1)
+      )
+    ]
+
+    cat(
+      "Bioconductor packages requested:",
+      length(packages),
+      "\n"
+    )
+
+    cat(
+      "Already installed:",
+      length(packages) - length(missing),
+      "\n"
+    )
+
+
+    # -------------------------------------------------------------------------
+    # Nothing to install
+    # -------------------------------------------------------------------------
+
+    if (length(missing) == 0) {
+
+      cat(
+        "All requested Bioconductor packages are already installed.\n"
+      )
+
+      cat("OCELOTL_BIOC_CHANGED=false\n")
+
+      quit(
+        save = "no",
+        status = 0
+      )
+    }
+
+
+    # -------------------------------------------------------------------------
+    # Install using mirror fallback
+    # -------------------------------------------------------------------------
+
+    initial_missing <- missing
+
+    for (mirror in mirrors) {
+
+      cat("\nTrying Bioconductor mirror:", mirror, "\n")
+
+      options(
+        BioC_mirror = mirror
+      )
+
+      try(
+        BiocManager::install(
+          missing,
+          lib = user_lib,
+          ask = FALSE,
+          update = FALSE
+        ),
+        silent = TRUE
+      )
+
+
+      # -----------------------------------------------------------------------
+      # Check what is still missing
+      # -----------------------------------------------------------------------
+
+      missing <- packages[
+        !vapply(
+          packages,
+          package_available,
+          logical(1)
+        )
+      ]
+
+      if (length(missing) == 0) {
+        break
+      }
+
+      cat(
+        "Still missing:",
+        paste(missing, collapse = ", "),
+        "\n"
+      )
+    }
+
+
+    # -------------------------------------------------------------------------
+    # Final validation
+    # -------------------------------------------------------------------------
+
+    if (length(missing) > 0) {
+
+      stop(
+        paste(
+          "Failed to install Bioconductor packages:",
+          paste(missing, collapse = ", ")
+        )
+      )
+    }
+
+    cat(
+      "Installed:",
+      paste(initial_missing, collapse = ", "),
+      "\n"
+    )
+
+    cat("OCELOTL_BIOC_CHANGED=true\n")
+
+    RSCRIPT
+  args:
+    executable: /bin/bash
+  register: r_bioconductor_install
+  changed_when: "'OCELOTL_BIOC_CHANGED=true' in r_bioconductor_install.stdout"
+
+
+- name: Report Bioconductor package status
+  ansible.builtin.debug:
+    msg: "{{ r_bioconductor_install.stdout_lines }}"

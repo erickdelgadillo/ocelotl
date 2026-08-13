@@ -1,0 +1,48 @@
+---
+# =============================================================================
+# Ocelotl - Install or detect RStudio Desktop
+# =============================================================================
+
+- name: Check whether RStudio is already installed
+  ansible.builtin.command: rstudio --version
+  register: rstudio_check
+  changed_when: false
+  failed_when: false
+
+
+# -----------------------------------------------------------------------------
+# Existing RStudio installation
+# -----------------------------------------------------------------------------
+
+- name: Report existing RStudio installation
+  ansible.builtin.debug:
+    msg: "{{ rstudio_check.stdout_lines[0] }}"
+  when: rstudio_check.rc == 0
+
+
+# -----------------------------------------------------------------------------
+# Clean system: install RStudio Desktop
+# -----------------------------------------------------------------------------
+
+- name: Install RStudio Desktop
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ r_rstudio_deb_url }}"
+    state: present
+    fail_on_autoremove: true
+  when: rstudio_check.rc != 0
+
+
+# -----------------------------------------------------------------------------
+# Verify RStudio after installation/detection
+# -----------------------------------------------------------------------------
+
+- name: Get installed RStudio version
+  ansible.builtin.command: rstudio --version
+  register: rstudio_version
+  changed_when: false
+
+
+- name: Report RStudio version
+  ansible.builtin.debug:
+    msg: "{{ rstudio_version.stdout_lines[0] }}"

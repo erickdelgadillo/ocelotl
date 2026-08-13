@@ -1,0 +1,122 @@
+---
+# =============================================================================
+# Ocelotl - CRAN packages
+# =============================================================================
+
+- name: Install missing CRAN packages
+  ansible.builtin.shell: |
+    Rscript --vanilla - <<'RSCRIPT'
+
+    cran_repo <- "{{ r_cran_repo }}"
+
+    packages <- c(
+    {% for package in r_cran_packages %}
+      "{{ package }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    )
+
+    # -------------------------------------------------------------------------
+    # User R library
+    # -------------------------------------------------------------------------
+
+    user_lib <- path.expand(Sys.getenv("R_LIBS_USER"))
+
+    if (!nzchar(user_lib)) {
+      stop("R_LIBS_USER could not be determined.")
+    }
+
+    if (!dir.exists(user_lib)) {
+      dir.create(
+        user_lib,
+        recursive = TRUE,
+        showWarnings = FALSE
+      )
+    }
+
+    .libPaths(c(user_lib, .libPaths()))
+
+
+    # -------------------------------------------------------------------------
+    # Detect missing packages
+    # -------------------------------------------------------------------------
+
+    installed <- rownames(installed.packages())
+
+    missing <- setdiff(
+      packages,
+      installed
+    )
+
+    cat("CRAN packages requested:", length(packages), "\n")
+    cat("Already installed:", length(packages) - length(missing), "\n")
+
+
+    # -------------------------------------------------------------------------
+    # Nothing to install
+    # -------------------------------------------------------------------------
+
+    if (length(missing) == 0) {
+
+      cat("All requested CRAN packages are already installed.\n")
+      cat("OCELOTL_CRAN_CHANGED=false\n")
+
+      quit(
+        save = "no",
+        status = 0
+      )
+    }
+
+
+    # -------------------------------------------------------------------------
+    # Install missing packages
+    # -------------------------------------------------------------------------
+
+    cat(
+      "Installing:",
+      paste(missing, collapse = ", "),
+      "\n"
+    )
+
+    install.packages(
+      missing,
+      repos = cran_repo,
+      lib = user_lib,
+      dependencies = NA
+    )
+
+
+    # -------------------------------------------------------------------------
+    # Validate installation
+    # -------------------------------------------------------------------------
+
+    still_missing <- missing[
+      !vapply(
+        missing,
+        requireNamespace,
+        logical(1),
+        quietly = TRUE
+      )
+    ]
+
+    if (length(still_missing) > 0) {
+
+      stop(
+        paste(
+          "Failed to install CRAN packages:",
+          paste(still_missing, collapse = ", ")
+        )
+      )
+    }
+
+    cat("OCELOTL_CRAN_CHANGED=true\n")
+
+    RSCRIPT
+  args:
+    executable: /bin/bash
+  register: r_cran_install
+  changed_when: "'OCELOTL_CRAN_CHANGED=true' in r_cran_install.stdout"
+
+
+- name: Report CRAN package status
+  ansible.builtin.debug:
+    msg: "{{ r_cran_install.stdout_lines }}"
