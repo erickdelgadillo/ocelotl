@@ -14,7 +14,6 @@ Every time a researcher joins a new laboratory, they spend hours—or even days�
 Ocelotl automates this process through a modular Ansible provisioning framework designed for reproducibility, maintainability, and portability.
 
 ## Core Principles
-## Core Principles
 
 - Reproducible
 - Modular
@@ -23,6 +22,7 @@ Ocelotl automates this process through a modular Ansible provisioning framework 
 - Documented
 
 ## Architecture
+```
 bootstrap.sh
         │
         ▼
@@ -38,6 +38,7 @@ Roles
         │
         ▼
 Verified Workstation
+```
 
 ## Current Features
 | Feature                        | Status |
@@ -53,7 +54,6 @@ Verified Workstation
 ## Implemented roles
 | roles                 | Status |
 | --------------------- | :----: |
-| apt                   |    ✅   |
 | apt                   |    ✅   |
 | common                |    ✅   |
 | conda                 |    ✅   |
@@ -77,6 +77,7 @@ cd ocelotl
 ```
 
 ## Development Workflow
+```
 feature branch
         │
         ▼
@@ -90,6 +91,7 @@ Merge
         │
         ▼
 main
+```
 
 
 ## Future Vision
