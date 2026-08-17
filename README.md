@@ -34,7 +34,9 @@ Roles
  ├── conda
  ├── java
  ├── docker
- └── nextflow
+ ├── nextflow
+ ├── R
+ └── RStudio
         │
         ▼
 Verified Workstation
@@ -60,6 +62,8 @@ Verified Workstation
 | java                  |    ✅   |
 | Docker                |    ✅   |
 | Nextflow              |    ✅   |
+| R                     |    ✅   |
+| RStudio               |    ✅   |
 
 ## Planned Roles
 | VS Code              |    ⏳   |
