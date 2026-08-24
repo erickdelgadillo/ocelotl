@@ -3,3 +3,4 @@ vscode_extensions:
   - nextflow.nextflow
   - MichaelCBrazell.nextflow-sandbox-2
   - redhat.vscode-yaml
+  - redhat.ansible
