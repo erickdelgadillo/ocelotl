@@ -5,11 +5,11 @@
   roles:
     - apt
     - common
-#    - git
+    - ansible
     - r
     - conda
     - java
     - docker
     - nextflow
-    - shell
     - vscode
+    - shell

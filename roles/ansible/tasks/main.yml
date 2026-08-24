@@ -1,0 +1,17 @@
+---
+- name: Install Ansible development tools
+  become: true
+  ansible.builtin.apt:
+    name: "{{ ansible_dev_packages }}"
+    state: present
+    update_cache: true
+
+- name: Verify ansible-lint installation
+  ansible.builtin.command:
+    cmd: ansible-lint --version
+  register: ansible_lint_version
+  changed_when: false
+
+- name: Show ansible-lint version
+  ansible.builtin.debug:
+    var: ansible_lint_version.stdout
