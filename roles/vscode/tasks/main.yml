@@ -42,3 +42,17 @@
     name: code
     state: present
     update_cache: true
+
+- name: Get installed VS Code extensions
+  ansible.builtin.command:
+    cmd: code --list-extensions
+  register: vscode_installed_extensions
+  changed_when: false
+  become: false
+
+- name: Install VS Code extensions
+  ansible.builtin.command:
+    cmd: "code --install-extension {{ item }}"
+  loop: "{{ vscode_extensions }}"
+  when: item not in vscode_installed_extensions.stdout_lines
+  become: false
