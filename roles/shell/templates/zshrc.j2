@@ -1,0 +1,26 @@
+export ZSH="$HOME/.oh-my-zsh"
+
+ZSH_THEME="robbyrussell"
+
+plugins=(
+{% for plugin in zsh_plugins %}
+  {{ plugin }}
+{% endfor %}
+)
+
+source $ZSH/oh-my-zsh.sh
+
+# History
+HIST_STAMPS="yyyy-mm-dd"
+
+# fzf
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
+
+# Useful aliases
+alias ll="ls -lah"
+alias gs="git status"
+alias gl="git log --oneline --graph --decorate"
+alias ..="cd .."
+alias ...="cd ../.."
