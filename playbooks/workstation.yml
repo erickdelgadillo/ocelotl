@@ -11,5 +11,5 @@
     - java
     - docker
     - nextflow
-#    - vscode
     - shell
+    - vscode

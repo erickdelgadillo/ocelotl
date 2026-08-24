@@ -1,0 +1,44 @@
+---
+- name: Install prerequisites for VS Code repository
+  become: true
+  ansible.builtin.apt:
+    name:
+      - wget
+      - gpg
+      - apt-transport-https
+    state: present
+    update_cache: true
+
+- name: Download Microsoft signing key
+  become: true
+  ansible.builtin.get_url:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    dest: /tmp/microsoft.asc
+    mode: "0644"
+
+- name: Convert Microsoft signing key to GPG keyring
+  become: true
+  ansible.builtin.command:
+    cmd: >
+      gpg --dearmor
+      --yes
+      --output /usr/share/keyrings/packages.microsoft.gpg
+      /tmp/microsoft.asc
+  args:
+    creates: /usr/share/keyrings/packages.microsoft.gpg
+
+- name: Add Visual Studio Code repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.microsoft.gpg]
+      https://packages.microsoft.com/repos/code stable main
+    filename: vscode
+    state: present
+
+- name: Install Visual Studio Code
+  become: true
+  ansible.builtin.apt:
+    name: code
+    state: present
+    update_cache: true
