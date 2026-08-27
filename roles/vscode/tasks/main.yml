@@ -54,5 +54,5 @@
   ansible.builtin.command:
     cmd: "code --install-extension {{ item }}"
   loop: "{{ vscode_extensions }}"
-  when: item not in vscode_installed_extensions.stdout_lines
+  when: (item | lower) not in (vscode_installed_extensions.stdout_lines | map('lower') | list)
   become: false

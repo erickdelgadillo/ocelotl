@@ -35,7 +35,15 @@ ensure_ansible() {
 run_workstation_playbook() {
     log_info "Starting workstation provisioning..."
 
+    local become_exe="sudo"
+
+    if command -v sudo.ws >/dev/null 2>&1; then
+        become_exe="$(command -v sudo.ws)"
+        log_info "Using sudo.ws for Ansible privilege escalation."
+    fi
+
     ANSIBLE_CONFIG="${SCRIPT_DIR}/ansible.cfg" \
+    ANSIBLE_BECOME_EXE="${become_exe}" \
         ansible-playbook \
         -i "${SCRIPT_DIR}/inventory/localhost.ini" \
         "${SCRIPT_DIR}/playbooks/workstation.yml" \
