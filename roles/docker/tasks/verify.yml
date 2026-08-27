@@ -53,6 +53,7 @@
       Docker Compose is installed correctly.
 
 - name: Read Docker daemon information
+  become: true
   ansible.builtin.command:
     argv:
       - docker

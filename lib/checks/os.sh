@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------
 
 readonly SUPPORTED_OS="ubuntu"
-readonly SUPPORTED_VERSIONS=("22.04" "24.04")
+readonly SUPPORTED_VERSIONS=("22.04" "24.04" "26.04")
 
 is_supported_version() {
     local detected_version="$1"
