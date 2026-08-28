@@ -17,10 +17,6 @@
         | list
       }}
 
-- name: Show selected Obsidian Debian packages
-  ansible.builtin.debug:
-    var: obsidian_deb_urls
-
 - name: Verify Obsidian Debian package was found
   ansible.builtin.assert:
     that:
