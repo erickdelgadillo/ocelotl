@@ -1,0 +1,12 @@
+---
+syncthing_apt_key_url: "https://syncthing.net/release-key.gpg"
+syncthing_apt_key_path: "/etc/apt/keyrings/syncthing-archive-keyring.gpg"
+
+syncthing_apt_repository: >-
+  deb [signed-by={{ syncthing_apt_key_path }}]
+  https://apt.syncthing.net/ syncthing stable-v2
+
+syncthing_apt_repository_file: "/etc/apt/sources.list.d/syncthing.list"
+syncthing_apt_preferences_file: "/etc/apt/preferences.d/syncthing.pref"
+
+syncthing_user: "{{ ansible_user_id }}"
