@@ -1,0 +1,51 @@
+---
+- name: Read recent Obsidian releases metadata
+  ansible.builtin.uri:
+    url: "{{ obsidian_github_api_url }}"
+    return_content: true
+  register: obsidian_releases
+
+- name: Collect Obsidian Debian package URLs
+  ansible.builtin.set_fact:
+    obsidian_deb_urls: >-
+      {{
+        obsidian_releases.json
+        | map(attribute='assets')
+        | flatten
+        | selectattr('name', 'search', '_' ~ obsidian_architecture ~ '[.]deb$')
+        | map(attribute='browser_download_url')
+        | list
+      }}
+
+- name: Show selected Obsidian Debian packages
+  ansible.builtin.debug:
+    var: obsidian_deb_urls
+
+- name: Verify Obsidian Debian package was found
+  ansible.builtin.assert:
+    that:
+      - obsidian_deb_urls | length > 0
+    fail_msg: "No Obsidian Debian package was found in recent releases."
+
+- name: Select latest Obsidian Debian package
+  ansible.builtin.set_fact:
+    obsidian_deb_url: "{{ obsidian_deb_urls | first }}"
+
+- name: Download Obsidian Debian package
+  ansible.builtin.get_url:
+    url: "{{ obsidian_deb_url }}"
+    dest: "{{ obsidian_download_dir }}/obsidian.deb"
+    mode: "0644"
+
+- name: Install Obsidian
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ obsidian_download_dir }}/obsidian.deb"
+    state: present
+
+- name: Verify Obsidian installation
+  ansible.builtin.command:
+    cmd: dpkg-query -W -f='${Status}' obsidian
+  register: obsidian_status
+  changed_when: false
+  failed_when: "'install ok installed' not in obsidian_status.stdout"
