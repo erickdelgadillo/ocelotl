@@ -1,0 +1,64 @@
+---
+- name: Ensure Godot install directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ godot_install_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Download Godot archive
+  ansible.builtin.get_url:
+    url: "{{ godot_download_url }}"
+    dest: "/tmp/{{ godot_archive_name }}"
+    mode: "0644"
+
+- name: Extract Godot
+  become: true
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ godot_archive_name }}"
+    dest: "{{ godot_install_dir }}"
+    remote_src: true
+    creates: "{{ godot_binary_path }}"
+
+- name: Create Godot command symlink
+  become: true
+  ansible.builtin.file:
+    src: "{{ godot_binary_path }}"
+    dest: "{{ godot_symlink_path }}"
+    state: link
+
+- name: Ensure Godot icon directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ godot_icon_path | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Download Godot icon
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ godot_icon_url }}"
+    dest: "{{ godot_icon_path }}"
+    mode: "0644"
+
+- name: Install Godot desktop entry
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ godot_desktop_file }}"
+    mode: "0644"
+    content: |
+      [Desktop Entry]
+      Name=Godot Engine
+      Comment=Multi-platform 2D and 3D game engine
+      Exec={{ godot_symlink_path }}
+      Icon=godot
+      Terminal=false
+      Type=Application
+      Categories=Development;IDE;
+      StartupNotify=true
+
+- name: Verify Godot installation
+  ansible.builtin.command:
+    cmd: godot --version
+  register: godot_version_check
+  changed_when: false
