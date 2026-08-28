@@ -1,0 +1,59 @@
+---
+- name: Ensure APT keyring directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Install Syncthing repository signing key
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ syncthing_apt_key_url }}"
+    dest: "{{ syncthing_apt_key_path }}"
+    mode: "0644"
+  register: syncthing_apt_key
+
+- name: Configure Syncthing APT repository
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ syncthing_apt_repository_file }}"
+    mode: "0644"
+    content: |
+      {{ syncthing_apt_repository }}
+  register: syncthing_apt_repo
+
+- name: Prefer packages from the Syncthing repository
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ syncthing_apt_preferences_file }}"
+    mode: "0644"
+    content: |
+      Package: *
+      Pin: origin apt.syncthing.net
+      Pin-Priority: 990
+
+- name: Update APT cache for Syncthing repository
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+  when: syncthing_apt_key.changed or syncthing_apt_repo.changed
+
+- name: Install Syncthing
+  become: true
+  ansible.builtin.apt:
+    name: syncthing
+    state: present
+
+- name: Enable and start Syncthing user service
+  ansible.builtin.systemd_service:
+    name: syncthing.service
+    scope: user
+    enabled: true
+    state: started
+
+- name: Verify Syncthing installation
+  ansible.builtin.command:
+    cmd: syncthing --version
+  register: syncthing_version_check
+  changed_when: false
