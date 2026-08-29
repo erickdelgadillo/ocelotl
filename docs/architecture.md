@@ -2,334 +2,246 @@
 
 ## 1. Purpose
 
-Ocelotl is a modular provisioning framework for bioinformatics workstations.
+Ocelotl is a modular provisioning framework for local bioinformatics workstations. It transforms a clean Ubuntu installation into a repeatable scientific computing environment using a Bash bootstrap and an Ansible playbook.
 
-Its goal is to transform a clean Ubuntu installation into a reproducible scientific computing environment using a predictable, testable and extensible architecture.
+The architecture separates host validation, provisioning, configuration, and verification so components can evolve independently without turning the bootstrap into a monolithic installer.
 
-The project minimizes manual configuration while promoting reproducibility, maintainability and portability across research environments.
+## 2. Target platform
 
----
+The complete workstation profile currently targets:
 
-## 2. Target Platform
+- Ubuntu 22.04 LTS, 24.04 LTS, or 26.04 LTS
+- x86_64 / amd64 architecture
+- A local workstation
+- A regular user account with `sudo` privileges
+- Internet access during provisioning
 
-Current supported platform:
+The bootstrap explicitly accepts the three listed Ubuntu versions. Some individual roles contain architecture mappings or may work elsewhere, but the full profile is limited to x86_64/amd64 because the current Obsidian and Godot roles use amd64/x86_64 artifacts.
 
-- Ubuntu 22.04 LTS
-- Ubuntu 24.04 LTS
-- x86_64 architecture
-- Local workstation
-- User with sudo privileges
+Other Linux distributions, macOS, Windows, HPC clusters, and cloud environments are outside the current supported scope.
 
-Currently out of scope:
+## 3. Design principles
 
-- Other Linux distributions
-- macOS
-- Windows
-- HPC clusters
-- Cloud environments
+Ocelotl favors:
 
----
+- Single-purpose roles
+- Reproducible and idempotent operations
+- Configuration in role defaults
+- Official repositories and release artifacts
+- Explicit privilege escalation
+- Read-only verification where practical
+- Safe repeated execution
+- A small bootstrap layer with orchestration logic only
 
-## 3. Design Philosophy
+Simple roles may keep installation and verification in one task file. Larger roles split their work into `install`, `configure`, and `verify` task files. This is a design convention rather than a requirement that every role has the same directory layout.
 
-Every component in Ocelotl follows the same design principles.
+## 4. Provisioning workflow
 
-- Single responsibility
-- Reproducible
-- Idempotent
-- Modular
-- Self-contained
-- Verifiable
-- Testable
-- Transparent
-- Safe to execute repeatedly
-- Easy to extend
-
-The project deliberately separates installation, configuration and verification in order to simplify maintenance and future development.
-
----
-
-## 4. Provisioning Workflow
-
-```
-Clean Ubuntu Installation
-            │
-            ▼
-      bootstrap.sh
-            │
-            ▼
-   Bootstrap Validation
-            │
-            ▼
-     Ensure Ansible
-            │
-            ▼
- Execute workstation.yml
-            │
-            ▼
-──────────── Roles ────────────
-
-install
-      │
-configure
-      │
-verify
-
-───────────────────────────────
-            │
-            ▼
-Provisioned Bioinformatics Workstation
+```text
+Clean supported Ubuntu installation
+                |
+                v
+          bootstrap.sh
+                |
+                +-- load lib/init.sh
+                +-- validate OS, sudo, network, Git, and curl
+                +-- install or verify Ansible Core
+                |
+                v
+      playbooks/workstation.yml
+                |
+                +-- apt -> common -> ansible
+                +-- r -> conda -> java -> docker -> nextflow
+                +-- vscode -> shell -> obsidian -> godot -> syncthing
+                |
+                v
+      Provisioned local workstation
 ```
 
----
+`bootstrap.sh` sets the repository's `ansible.cfg`, selects `sudo.ws` as the become executable when it is available, and otherwise uses `sudo`. It then runs the local inventory with `--ask-become-pass`.
 
-## 5. Role Lifecycle
+## 5. Bootstrap responsibilities
 
-Every role follows the same lifecycle.
+The bootstrap layer prepares the host for Ansible and does not implement workstation features itself.
 
-```
-defaults
-      │
-      ▼
-install
-      │
-      ▼
-configure
-      │
-      ▼
-verify
-```
+Its responsibilities are:
 
-### defaults
+1. Resolve and load Ocelotl's internal Bash modules.
+2. Verify the operating system and required host capabilities.
+3. Ensure Ansible Core is installed and executable.
+4. Launch `playbooks/workstation.yml` against `inventory/localhost.ini`.
+5. Stop on errors and report failures through the logging helpers.
 
-Contains every configurable parameter used by the role.
+Current prerequisite checks cover:
 
-Examples:
-
-- package names
-- installation paths
-- URLs
-- versions
-- service names
-
-No hardcoded values should appear inside tasks whenever possible.
-
----
-
-### install
-
-Responsible only for installing software.
-
-Responsibilities include:
-
-- Downloading files
-- Installing packages
-- Creating directories
-- Adding repositories
-
-Installation should never perform configuration.
-
----
-
-### configure
-
-Responsible only for configuring installed software.
-
-Examples:
-
-- Generate configuration files
-- Enable services
-- Configure user permissions
-- Configure environment variables
-
-Configuration should never install software.
-
----
-
-### verify
-
-Responsible only for demonstrating that the role completed successfully.
-
-Typical workflow:
-
-```
-Read
-    ↓
-Register
-    ↓
-Assert
-```
-
-Verification never modifies the system.
-
-Every verification should clearly report success or failure.
-
----
-
-## 6. Bootstrap Responsibilities
-
-The bootstrap layer exists only to prepare the system for Ansible.
-
-Responsibilities:
-
-- Initialize Ocelotl
-- Load internal Bash modules
-- Execute prerequisite checks
-- Install Ansible when necessary
-- Launch the provisioning playbook
-- Exit gracefully on failure
-
-The bootstrap script should remain small and contain orchestration logic only.
-
----
-
-## 7. Checks
-
-Bootstrap checks validate that the machine is ready before provisioning begins.
-
-Current checks include:
-
-- Supported operating system
-- sudo privileges
+- Supported Ubuntu version
+- `sudo` access
 - Internet connectivity
 - Git availability
 - curl availability
 
-Checks never modify the system.
+## 6. Workstation role order
 
----
+The order in `playbooks/workstation.yml` is deliberate. It establishes prerequisites before consumers and keeps related workstation layers together.
 
-## 8. Current Role Dependencies
+| Order | Role | Responsibility |
+| ---: | --- | --- |
+| 1 | `apt` | Refresh the APT cache |
+| 2 | `common` | Install shared build and command-line packages |
+| 3 | `ansible` | Install and verify Ansible development tooling |
+| 4 | `r` | Provision R, RStudio, system libraries, and configured R packages |
+| 5 | `conda` | Install and configure Miniforge and scientific channels |
+| 6 | `java` | Install and verify OpenJDK |
+| 7 | `docker` | Install and configure Docker Engine and plugins |
+| 8 | `nextflow` | Install and verify Nextflow after its common runtimes are available |
+| 9 | `vscode` | Install Visual Studio Code and configured extensions |
+| 10 | `shell` | Configure Zsh, Oh My Zsh, plugins, and terminal tools |
+| 11 | `obsidian` | Install Obsidian from official release metadata |
+| 12 | `godot` | Install Godot and desktop integration |
+| 13 | `syncthing` | Install Syncthing and enable its user service |
 
+The playbook uses role ordering rather than Ansible `meta` dependencies. A role should not assume that an undeclared command or file exists unless it is supplied by an earlier role or handled within the role itself.
+
+The repository also contains a placeholder `roles/git` directory. It has no implementation and is not included in the workstation playbook, so Git user configuration remains roadmap work.
+
+## 7. Role lifecycle
+
+For roles with multiple phases, the preferred lifecycle is:
+
+```text
+defaults -> install -> configure -> verify
 ```
-common
-│
+
+### Defaults
+
+Role defaults hold configurable values such as package names, versions, download URLs, installation paths, service names, channels, and extension lists. This keeps task logic reusable and makes future customization easier.
+
+### Install
+
+Installation tasks add repositories, download trusted artifacts, install packages, and create required directories. They should use idempotent Ansible modules and guards such as `creates` where appropriate.
+
+### Configure
+
+Configuration tasks manage files, services, permissions, environment settings, and user membership. When an existing user file is replaced, the role should preserve a backup or otherwise make the behavior explicit.
+
+### Verify
+
+Verification tasks inspect the resulting state without changing it. Typical checks run a version command, query package state, or assert registered results. Not every small role has a separate `verify.yml`; some perform their verification inline.
+
+## 8. Capability groups
+
+```text
+Base system
 ├── apt
+├── common
+└── ansible
 
-conda
-│
-└── common
-
-java
-│
-└── common
-
-docker
-│
-└── common
-
-nextflow
+Scientific computing
+├── r
+│   ├── R and optional RStudio Desktop
+│   ├── CRAN packages
+│   ├── Bioconductor packages
+│   └── GitHub-hosted R packages
+├── conda
+│   └── Miniforge, conda-forge, and bioconda
 ├── java
 ├── docker
-└── conda
+└── nextflow
+
+Workstation applications
+├── vscode
+│   └── Nextflow, YAML, and Ansible extensions
+├── shell
+│   └── Zsh, Oh My Zsh, plugins, and terminal utilities
+├── obsidian
+├── godot
+└── syncthing
 ```
 
-Dependencies should remain explicit and minimal.
+## 9. Repository structure
 
----
-
-## 9. Repository Structure
-
-```
-Ocelotl/
-│
-├── bootstrap.sh
-├── README.md
-├── CHANGELOG
-├── docs/
-│   └── architecture.md
-│
-├── lib/
-│   ├── checks/
-│   ├── core/
-│   ├── installers/
-│   ├── configuration/
-│   ├── verification/
-│   ├── init.sh
-│   └── logging.sh
-│
+```text
+ocelotl/
+├── bootstrap.sh                 # Public entry point
+├── ansible.cfg                  # Repository-local Ansible configuration
 ├── inventory/
+│   └── localhost.ini            # Local workstation inventory
 ├── playbooks/
-│
+│   ├── workstation.yml          # Complete workstation profile
+│   └── r.yml                    # Focused R profile
+├── lib/
+│   ├── checks/                  # Readiness checks
+│   ├── core/                    # Ansible orchestration
+│   ├── installers/              # Bootstrap installers
+│   ├── init.sh                  # Module loader
+│   └── logging.sh               # Bootstrap logging
 ├── roles/
+│   ├── apt/
 │   ├── common/
+│   ├── ansible/
+│   ├── r/
 │   ├── conda/
 │   ├── java/
 │   ├── docker/
 │   ├── nextflow/
-│   └── ...
-│
-└── ansible.cfg
+│   ├── vscode/
+│   ├── shell/
+│   ├── obsidian/
+│   ├── godot/
+│   └── syncthing/
+├── docs/
+│   └── architecture.md
+├── README.md
+└── CHANGELOG
 ```
 
----
+## 10. Idempotence and failure behavior
 
-## 10. Security Principles
+Ocelotl is intended to converge an existing workstation as well as provision a clean one. Roles should:
 
-Ocelotl must never:
+- Declare desired state instead of relying on unconditional shell commands.
+- Avoid reporting changes when only inspecting state.
+- Refresh package metadata only when necessary.
+- Use registered results to gate dependent operations.
+- Preserve user configuration when replacement is necessary.
+- Fail early when a required artifact, package, or verification result is unavailable.
 
-- Store passwords
-- Store API keys
-- Store SSH private keys
-- Execute the entire project as root
-- Execute unverified remote scripts
-- Modify unrelated user files
-- Replace existing user configurations without warning
-- Install GPU drivers automatically
+A successful first run provisions the host. A successful second run should produce no changes unless upstream state, configuration, or requested versions have changed.
 
-Administrative privileges should only be requested when required.
+## 11. Security boundaries
 
----
+Ocelotl must not:
 
-## 11. Scope of Version 1.0
+- Store passwords, API keys, tokens, or SSH private keys.
+- Run the entire repository as root.
+- Modify unrelated user files.
+- Install GPU drivers automatically.
+- Hide privilege escalation or destructive changes.
 
-Version 1.0 provides:
+Administrative privileges are requested only for system-level tasks. User-scoped tools and configuration should run as the invoking user.
 
-- Bootstrap framework
-- Automatic Ansible installation
-- Common package installation
-- Conda installation and configuration
-- Java installation
-- Docker installation and configuration
-- Nextflow installation
-- Verification framework
-- Modular role architecture
-- Project documentation
+## 12. Current scope and roadmap
 
----
+The current scope is a reproducible local bioinformatics workstation with the 13 roles listed above.
 
-## 12. Out of Scope
+Possible future profiles or roles include:
 
-Future releases may include:
-
-- Git configuration
-- VS Code configuration
-- Shell customization
-- R
-- Bioinformatics Conda environments
+- Git user configuration
+- Named bioinformatics Conda environments
 - Apptainer / Singularity
-- CUDA
-- NVIDIA drivers
+- CUDA and NVIDIA tooling
+- Automated multi-version Ubuntu testing
 - HPC / SLURM support
 - Cloud provisioning
 
----
+Roadmap items are not supported capabilities until they are implemented, included in a playbook, and documented.
 
-## 13. Definition of Success
+## 13. Definition of success
 
-Ocelotl is considered successful when a user can:
+Ocelotl succeeds when a user can:
 
-1. Clone the repository on a clean Ubuntu installation.
-2. Execute a single documented command.
-3. Obtain a fully provisioned and verified bioinformatics workstation.
-4. Begin scientific work without manually installing each dependency.
-
-```bash
-git clone <repository>
-
-cd ocelotl
-
-./bootstrap.sh
-```
-
-The complete provisioning process must be reproducible, deterministic, maintainable and safe to execute repeatedly.
+1. Clone the repository on a supported clean Ubuntu workstation.
+2. Run `./bootstrap.sh`.
+3. Complete provisioning without manually installing each component.
+4. Run the same command again safely to confirm convergence.
+5. Begin scientific work with the documented tools available.
