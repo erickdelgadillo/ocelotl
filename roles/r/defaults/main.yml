@@ -58,6 +58,7 @@ r_cran_packages:
   - remotes
   - devtools
   - renv
+  - here
 
   # Data manipulation
   - readr
@@ -65,6 +66,7 @@ r_cran_packages:
   - tidyr
   - purrr
   - stringr
+  - forcats
   - tibble
   - data.table
   - dtplyr
@@ -72,6 +74,7 @@ r_cran_packages:
 
   # Plotting
   - ggplot2
+  - scales
   - ggthemes
   - ggh4x
   - ggpattern
@@ -121,6 +124,7 @@ r_bioc_mirrors:
   - "https://bioconductor.statistik.tu-dortmund.de"
 
 r_bioconductor_packages:
+  - limma
   - edgeR
   - ComplexHeatmap
   - ALDEx2
