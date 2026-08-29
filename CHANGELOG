@@ -1,16 +1,41 @@
-# Ocelotl v1.0.0
+# Changelog
 
-## Features
+All notable changes to Ocelotl are documented in this file.
 
-- Modular Ansible architecture
-- Conda installation and verification
-- Java installation and verification
-- Docker installation and verification
-- Nextflow installation and verification
-- Idempotent provisioning
-- Official repositories
-- Modular verification system
+The project follows [Semantic Versioning](https://semver.org/). Changes that have been merged since the latest tag remain under **Unreleased** until a version is approved, tagged, and published.
 
-## Notes
+## [Unreleased]
 
-First stable release.
+### Added
+
+- Automated R environment provisioning, including R, optional RStudio Desktop, system dependencies, and configured CRAN, Bioconductor, and GitHub packages.
+- Visual Studio Code installation with Nextflow, Nextflow Sandbox, YAML, and Ansible extensions.
+- Zsh and Oh My Zsh configuration with autosuggestions, syntax highlighting, and common terminal tools.
+- Ansible development tooling through the new `ansible` role, including `ansible-lint`.
+- Ubuntu 26.04 support in the bootstrap operating-system check, alongside Ubuntu 22.04 and 24.04.
+- Obsidian installation from official release artifacts.
+- Godot installation with a command symlink and desktop integration.
+- Syncthing installation from its official APT repository, with its user service enabled.
+- MIT License.
+
+### Fixed
+
+- The bootstrap now launches the main workstation playbook after completing prerequisite checks and ensuring Ansible is available.
+- Docker provisioning reloads systemd units after repository and socket migration, preventing stale unit state on an existing workstation.
+
+## [1.0.0] - 2026-08-06
+
+### Added
+
+- Modular Ansible role architecture.
+- Bootstrap prerequisite checks and automatic Ansible Core installation.
+- Common system package provisioning.
+- Conda installation, configuration, and verification.
+- Java installation and verification.
+- Docker installation, configuration, and verification.
+- Nextflow installation and verification.
+- Idempotent provisioning and modular verification tasks.
+- Use of official software repositories and release artifacts.
+
+[Unreleased]: https://github.com/erickdelgadillo/ocelotl/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/erickdelgadillo/ocelotl/tree/v1.0.0
