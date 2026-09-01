@@ -1,4 +1,4 @@
-# Ocelotl
+0# Ocelotl
 
 [![Latest tag](https://img.shields.io/badge/latest%20tag-v1.0.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.0.0)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
@@ -104,7 +104,7 @@ The latest tag is `v1.0.0`. Features merged since that tag are documented under 
 
 ## Why Ocelotl?
 
-“Ocelotl” is the Nahuatl word for the ocelot, a wild feline native to the Americas. The name reflects adaptability, precision, and resilience—qualities that also define reproducible scientific computing.
+“Ocelotl” is the Nahuatl word for the ocelot, a wild feline native to the Americas. The name reflects adaptability, precision, and resilience.Qualities that also define reproducible scientific computing.
 
 ## License
 
