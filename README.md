@@ -93,6 +93,16 @@ Potential future work includes:
 
 These items are not part of the current workstation playbook.
 
+## Definition of success
+Ocelotl succeeds when a user can:
+
+Clone the repository on a supported clean Ubuntu workstation.
+Run ./bootstrap.sh.
+Complete provisioning without manually installing each component.
+Run the same command again safely to confirm convergence.
+Begin scientific work with the documented tools available.
+
+
 ## Release status
 
 The latest tag is `v1.0.0`. Features merged since that tag are documented under [Unreleased](CHANGELOG) and will remain unreleased until a new tag and GitHub Release are approved and published.
