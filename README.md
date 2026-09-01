@@ -1,4 +1,4 @@
-0# Ocelotl
+# Ocelotl
 
 [![Latest tag](https://img.shields.io/badge/latest%20tag-v1.0.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.0.0)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
