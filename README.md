@@ -77,11 +77,6 @@ The bootstrap asks for the privilege-escalation password when Ansible starts. Ro
 - Configuration through role defaults instead of scattered hard-coded values
 - No credentials or private keys stored in the repository
 
-## Development workflow
-
-```text
-feature branch -> pull request -> review -> merge -> main
-```
 
 Keep changes focused, preserve role idempotence, and update the documentation whenever the workstation profile or supported platform changes.
 
