@@ -1,0 +1,44 @@
+---
+- name: Ensure LibreSprite dependencies are installed
+  ansible.builtin.apt:
+    name:
+      - unzip
+      - libfuse2t64
+    state: present
+    update_cache: true
+  become: true
+
+- name: Create LibreSprite installation directory
+  ansible.builtin.file:
+    path: "{{ libresprite_install_dir }}"
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Download LibreSprite archive
+  ansible.builtin.get_url:
+    url: "{{ libresprite_download_url }}"
+    dest: "/tmp/{{ libresprite_archive }}"
+    mode: "0644"
+
+- name: Extract LibreSprite AppImage
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ libresprite_archive }}"
+    dest: "{{ libresprite_install_dir }}"
+    remote_src: true
+    creates: "{{ libresprite_install_dir }}/{{ libresprite_appimage }}"
+  become: true
+
+- name: Make LibreSprite AppImage executable
+  ansible.builtin.file:
+    path: "{{ libresprite_install_dir }}/{{ libresprite_appimage }}"
+    mode: "0755"
+  become: true
+
+- name: Create LibreSprite command symlink
+  ansible.builtin.file:
+    src: "{{ libresprite_install_dir }}/{{ libresprite_appimage }}"
+    dest: "{{ libresprite_bin_path }}"
+    state: link
+    force: true
+  become: true

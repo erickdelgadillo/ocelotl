@@ -16,3 +16,6 @@
     - obsidian
     - godot
     - syncthing
+    - role: libresprite
+      tags:
+      - libresprite
