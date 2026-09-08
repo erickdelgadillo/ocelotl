@@ -4,6 +4,7 @@
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
 ![Ansible](https://img.shields.io/badge/Ansible-automation-red)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Ansible CI](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml)
 
 > Build a reproducible bioinformatics workstation from a clean Ubuntu installation using Ansible.
 
@@ -79,6 +80,17 @@ The bootstrap asks for the privilege-escalation password when Ansible starts. Ro
 
 
 Keep changes focused, preserve role idempotence, and update the documentation whenever the workstation profile or supported platform changes.
+
+## Continuous integration
+
+Pull requests and changes to `main` are automatically validated with GitHub Actions.
+
+The CI currently runs:
+
+- `ansible-playbook --syntax-check`
+- `ansible-lint`
+
+This helps keep the workstation playbook syntactically valid and enforces consistent Ansible practices before changes reach `main`.
 
 ## Roadmap
 
