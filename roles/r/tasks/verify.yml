@@ -24,14 +24,14 @@
 
 - name: Verify RStudio installation
   ansible.builtin.command: rstudio --version
-  register: rstudio_verify
+  register: r_rstudio_verify
   changed_when: false
   when: r_install_rstudio | bool
 
 
 - name: Report RStudio version
   ansible.builtin.debug:
-    msg: "✓ {{ rstudio_verify.stdout_lines[0] }}"
+    msg: "✓ {{ r_rstudio_verify.stdout_lines[0] }}"
   when: r_install_rstudio | bool
 
 

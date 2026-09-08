@@ -55,4 +55,5 @@
     cmd: "code --install-extension {{ item }}"
   loop: "{{ vscode_extensions }}"
   when: (item | lower) not in (vscode_installed_extensions.stdout_lines | map('lower') | list)
+  changed_when: true
   become: false

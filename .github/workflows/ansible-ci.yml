@@ -1,0 +1,29 @@
+name: Ansible CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Ansible tooling
+        run: |
+          python -m pip install ansible ansible-lint
+
+      - name: Syntax check
+        run: |
+          ansible-playbook \
+            -i inventory/localhost.ini \
+            playbooks/workstation.yml \
+            --syntax-check
+
+      - name: Run ansible-lint
+        run: ansible-lint
