@@ -5,7 +5,7 @@
 
 - name: Check whether RStudio is already installed
   ansible.builtin.command: rstudio --version
-  register: rstudio_check
+  register: r_rstudio_check
   changed_when: false
   failed_when: false
 
@@ -16,8 +16,8 @@
 
 - name: Report existing RStudio installation
   ansible.builtin.debug:
-    msg: "{{ rstudio_check.stdout_lines[0] }}"
-  when: rstudio_check.rc == 0
+    msg: "{{ r_rstudio_check.stdout_lines[0] }}"
+  when: r_rstudio_check.rc == 0
 
 
 # -----------------------------------------------------------------------------
@@ -30,7 +30,7 @@
     deb: "{{ r_rstudio_deb_url }}"
     state: present
     fail_on_autoremove: true
-  when: rstudio_check.rc != 0
+  when: r_rstudio_check.rc != 0
 
 
 # -----------------------------------------------------------------------------
@@ -39,10 +39,10 @@
 
 - name: Get installed RStudio version
   ansible.builtin.command: rstudio --version
-  register: rstudio_version
+  register: r_rstudio_version
   changed_when: false
 
 
 - name: Report RStudio version
   ansible.builtin.debug:
-    msg: "{{ rstudio_version.stdout_lines[0] }}"
+    msg: "{{ r_rstudio_version.stdout_lines[0] }}"

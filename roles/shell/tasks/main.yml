@@ -16,23 +16,23 @@
 - name: Install Oh My Zsh
   ansible.builtin.git:
     repo: https://github.com/ohmyzsh/ohmyzsh.git
-    dest: "{{ ohmyzsh_dir }}"
+    dest: "{{ shell_ohmyzsh_dir }}"
+    version: "146461f7c6d95f4ba1220559d66eb113418b40a8"
     depth: 1
-    update: true
 
 - name: Install zsh-autosuggestions
   ansible.builtin.git:
     repo: https://github.com/zsh-users/zsh-autosuggestions.git
-    dest: "{{ ohmyzsh_dir }}/custom/plugins/zsh-autosuggestions"
+    dest: "{{ shell_ohmyzsh_dir }}/custom/plugins/zsh-autosuggestions"
+    version: "85919cd1ffa7d2d5412f6d3fe437ebdbeeec4fc5"
     depth: 1
-    update: true
 
 - name: Install zsh-syntax-highlighting
   ansible.builtin.git:
     repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-    dest: "{{ ohmyzsh_dir }}/custom/plugins/zsh-syntax-highlighting"
+    dest: "{{ shell_ohmyzsh_dir }}/custom/plugins/zsh-syntax-highlighting"
+    version: "2fc57d63067c18b1100ecdbf684fa5baf49459d1"
     depth: 1
-    update: true
 
 - name: Configure Zsh
   ansible.builtin.template:

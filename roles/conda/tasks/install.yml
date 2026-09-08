@@ -2,22 +2,22 @@
 - name: Check for an existing Miniconda installation
   ansible.builtin.stat:
     path: "{{ ansible_env.HOME }}/miniconda3/bin/conda"
-  register: miniconda_installation
+  register: conda_miniconda_installation
 
 - name: Check for an existing Miniforge installation
   ansible.builtin.stat:
     path: "{{ ansible_env.HOME }}/miniforge3/bin/conda"
-  register: miniforge_installation
+  register: conda_miniforge_installation
 
 - name: Select existing Conda executable
   ansible.builtin.set_fact:
     conda_executable: >-
       {{
         (ansible_env.HOME ~ '/miniconda3/bin/conda')
-        if miniconda_installation.stat.exists
+        if conda_miniconda_installation.stat.exists
         else
         (ansible_env.HOME ~ '/miniforge3/bin/conda')
-        if miniforge_installation.stat.exists
+        if conda_miniforge_installation.stat.exists
         else
         ''
       }}

@@ -2,9 +2,9 @@
 shell_user: "{{ ansible_user_id }}"
 shell_home: "{{ ansible_env.HOME }}"
 
-ohmyzsh_dir: "{{ shell_home }}/.oh-my-zsh"
+shell_ohmyzsh_dir: "{{ shell_home }}/.oh-my-zsh"
 
-zsh_plugins:
+shell_zsh_plugins:
   - git
   - history
   - zsh-autosuggestions
