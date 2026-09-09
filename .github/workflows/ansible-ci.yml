@@ -29,12 +29,16 @@ jobs:
         run: ansible-lint
 
       - name: First provisioning run
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ansible-playbook \
             -i inventory/localhost.ini \
             playbooks/workstation.yml
 
       - name: Second provisioning run
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -o pipefail
           ansible-playbook \
