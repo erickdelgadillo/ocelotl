@@ -27,3 +27,25 @@ jobs:
 
       - name: Run ansible-lint
         run: ansible-lint
+
+      - name: First provisioning run
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ansible-playbook \
+            -i inventory/localhost.ini \
+            playbooks/workstation.yml
+
+      - name: Second provisioning run
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -o pipefail
+          ansible-playbook \
+            -i inventory/localhost.ini \
+            playbooks/workstation.yml \
+            | tee idempotence.log
+
+      - name: Check idempotence
+        run: |
+          grep "changed=0.*unreachable=0.*failed=0" idempotence.log
