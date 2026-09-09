@@ -1,10 +1,10 @@
 # Ocelotl
 
-[![Latest tag](https://img.shields.io/badge/latest%20tag-v1.0.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.0.0)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
-![Ansible](https://img.shields.io/badge/Ansible-automation-red)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Ansible CI](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml)
+![Ansible](https://img.shields.io/badge/Ansible-automation-red)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
+[![Latest tag](https://img.shields.io/badge/latest%20tag-v1.0.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.0.0)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 > Build a reproducible bioinformatics workstation from a clean Ubuntu installation using Ansible.
 
