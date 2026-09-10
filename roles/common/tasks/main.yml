@@ -6,8 +6,13 @@
       - build-essential
       - ca-certificates
       - curl
+      - git
       - gnupg
+      - htop
+      - jq
+      - rsync
       - software-properties-common
+      - tree
       - unzip
       - wget
       - zip
