@@ -3,24 +3,24 @@
   hosts: workstation
 
   roles:
-  - apt
+    - apt
 
-  - role: common
-    tags:
-      - common
+    - role: common
+      tags:
+        - common
 
-  - ansible
-  - r
-  - conda
-  - java
-  - docker
-  - nextflow
-  - vscode
-  - shell
-  - obsidian
-  - godot
-  - syncthing
+    - ansible
+    - r
+    - conda
+    - java
+    - docker
+    - nextflow
+    - vscode
+    - shell
+    - obsidian
+    - godot
+    - syncthing
 
-  - role: libresprite
-    tags:
-      - libresprite
+    - role: libresprite
+      tags:
+        - libresprite
