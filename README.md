@@ -37,9 +37,7 @@ Changes are primarily developed and tested on a Linux laptop, then applied to a 
 
 ### Development system
 
-Ocelotl is primarily developed and validated on an:
-
-**ASUS ROG Strix G513IM**
+#####**ASUS ROG Strix G513IM**
 - **CPU:** AMD Ryzen 7 4800h
 - **Memory:** 64 GB DDR4 RAM 3200 MT/s
 - **Discrete GPU:** NVIDIA GeForce RTX 3060 Laptop GPU, 6 GB VRAM
@@ -50,9 +48,9 @@ Ocelotl is primarily developed and validated on an:
 - **Storage configuration:** encrypted Ubuntu installation using LUKS/LVM,
   alongside Windows and a separate NTFS data volume
 
-Ocelotl is ultimately deployed on a custom-built scientific workstation:
+### **Utimately deployed on a custom-built scientific workstation:**
 
-**ASUS ROG Strix B650E-E Gaming WiFi**
+#####**ASUS ROG Strix B650E-E Gaming WiFi**
 - **CPU:** AMD Ryzen 9 9950X3D
 - **Memory:** 192 GB DDR5 RAM 5000 MT/s
 - **Discrete GPU:** NVIDIA GeForce RTX 4070 Ti
