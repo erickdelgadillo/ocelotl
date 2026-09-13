@@ -287,7 +287,7 @@ These items are not part of the current workstation playbook unless explicitly m
 The latest tagged release is:
 
 ```text
-v1.0.0
+v1.2.0
 ```
 
 Features merged since that tag are documented under [Unreleased](CHANGELOG) and remain unreleased until a new version tag and GitHub Release are approved and published.
