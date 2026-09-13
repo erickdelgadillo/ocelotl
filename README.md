@@ -51,6 +51,7 @@ Ocelotl is primarily developed and validated on an:
   alongside Windows and a separate NTFS data volume
 
 Ocelotl is ultimately deployed on a custom-built scientific workstation:
+
 **ASUS ROG Strix B650E-E Gaming WiFi**
 - **CPU:** AMD Ryzen 9 9950X3D
 - **Memory:** 192 GB DDR5 RAM 5000 MT/s
