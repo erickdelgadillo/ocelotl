@@ -298,7 +298,8 @@ Features merged since that tag are documented under [Unreleased](CHANGELOG) and 
 
 **Ocelotl** is the Nahuatl word for the ocelot, a wild feline native to the Americas.
 
-The name reflects adaptability, precision, and resilience — qualities that also characterize reproducible scientific computing.
+The name reflects adaptability, precision, and resilience.
+++Qualities that also characterize reproducible scientific computing.**
 
 ---
 
