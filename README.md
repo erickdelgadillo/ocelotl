@@ -37,29 +37,34 @@ Changes are primarily developed and tested on a Linux laptop, then applied to a 
 
 ### Development system
 
-The primary development machine is an **ASUS ROG Strix G513IM** laptop running Ubuntu.
+Ocelotl is primarily developed and validated on an:
 
-- Ubuntu Linux
-- x86_64 / amd64
-- 64 GB RAM
-- Used for Ansible role development, configuration changes, documentation, and workflow validation
+**ASUS ROG Strix G513IM**
+- **CPU:** AMD Ryzen 7 4800h
+- **Memory:** 64 GB DDR4 RAM
+- **Discrete GPU:** NVIDIA GeForce RTX 3060 Laptop GPU, 6 GB VRAM
+- **Integrated GPU:** AMD Radeon Vega Graphics
+- **Storage:** 2 × 1 TB NVMe SSDs
+- **Operating system:** Ubuntu 26.04 LTS
+- **Architecture:** x86_64
+- **Storage configuration:** encrypted Ubuntu installation using LUKS/LVM,
+  alongside Windows and a separate NTFS data volume
 
-The laptop provides a separate environment in which provisioning changes can be developed and tested before they are applied to the main computational workstation.
 
-### Scientific workstation
+Ocelotl is ultimately deployed on a custom-built scientific workstation:
+
+**Custom ASUS ROG Strix 6D**
+- **CPU:** AMD Ryzen 9 9950X3D
+- **Memory:** 192 GB DDR5 RAM
+- **Discrete GPU:** NVIDIA GeForce RTX 4070 Ti
+- **Integrated GPU:** UNKNOWN
+- **Storage:** 1 TB NVMe Gen5 SSDs + 2 TB NVMe Gen4 SSDs + 1 TB NVMe Gen4 SSDs + 2 x 2Tb SSD SATA 
+- **Operating system:** Ubuntu 26.04 LTS
+- **Architecture:** x86_64
+- **Storage configuration:** encrypted Ubuntu installation using LUKS/LVM,
+  alongside Windows and a separate NTFS data volume
 
 The primary deployment target is a **custom workstation designed, assembled, and configured by the repository author** for computational biology workloads.
-
-- AMD Ryzen 9 9950X3D
-- ~192 GB DDR5 RAM
-- NVIDIA GeForce RTX 4070 Ti
-- Ubuntu Linux
-- NVIDIA/CUDA-capable compute environment
-- x86_64 / amd64
-
-The workstation is intended for substantially heavier workloads, including large biological datasets, local bioinformatics pipelines, Nextflow/nf-core workflows, and other compute- and memory-intensive analyses.
-
-Ocelotl provides the reproducible software layer on top of this hardware. Instead of rebuilding the scientific environment manually after system changes or reinstallations, the desired workstation configuration is expressed as code and managed through Ansible.
 
 ```text
 Development laptop
