@@ -41,7 +41,7 @@ Ocelotl is primarily developed and validated on an:
 
 **ASUS ROG Strix G513IM**
 - **CPU:** AMD Ryzen 7 4800h
-- **Memory:** 64 GB DDR4 RAM
+- **Memory:** 64 GB DDR4 RAM 3200 MT/s
 - **Discrete GPU:** NVIDIA GeForce RTX 3060 Laptop GPU, 6 GB VRAM
 - **Integrated GPU:** AMD Radeon Vega Graphics
 - **Storage:** 2 × 1 TB NVMe SSDs
@@ -50,14 +50,12 @@ Ocelotl is primarily developed and validated on an:
 - **Storage configuration:** encrypted Ubuntu installation using LUKS/LVM,
   alongside Windows and a separate NTFS data volume
 
-
 Ocelotl is ultimately deployed on a custom-built scientific workstation:
-
-**Custom ASUS ROG Strix 6D**
+**ASUS ROG Strix B650E-E Gaming WiFi**
 - **CPU:** AMD Ryzen 9 9950X3D
-- **Memory:** 192 GB DDR5 RAM
+- **Memory:** 192 GB DDR5 RAM 5000 MT/s
 - **Discrete GPU:** NVIDIA GeForce RTX 4070 Ti
-- **Integrated GPU:** UNKNOWN
+- **Integrated GPU:** AMD Radeon Graphics (RDNA 2, 2 CUs)
 - **Storage:** 1 TB NVMe Gen5 SSDs + 2 TB NVMe Gen4 SSDs + 1 TB NVMe Gen4 SSDs + 2 x 2Tb SSD SATA 
 - **Operating system:** Ubuntu 26.04 LTS
 - **Architecture:** x86_64
