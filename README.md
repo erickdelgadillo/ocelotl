@@ -56,7 +56,7 @@ The laptop is used for Ansible role development, configuration changes, document
 
 ### Scientific workstation
 
-Ocelotl is ultimately deployed on a custom-built scientific workstation designed, assembled, and configured by the repository author.
+Ocelotl is ultimately deployed on a custom-built scientific workstation **designed, assembled, and configured by the repository author**.
 
 - **CPU:** AMD Ryzen 9 9950X3D (16 cores / 32 threads)
 - **Motherboard:** ASUS ROG Strix B650E-E Gaming WiFi
