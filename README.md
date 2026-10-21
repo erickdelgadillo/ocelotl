@@ -1,4 +1,4 @@
-# Ocelotl
+# Ocelotl 🐆
 
 [![Ansible CI](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml)
 ![Ansible](https://img.shields.io/badge/Ansible-automation-red)
