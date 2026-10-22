@@ -52,7 +52,7 @@ Clean supported Ubuntu installation
                 |
                 +-- apt -> common -> ansible
                 +-- r -> conda -> java -> docker -> nextflow
-                +-- vscode -> shell -> obsidian -> godot -> syncthing
+                +-- vscode -> shell -> obsidian -> godot
                 |
                 v
       Provisioned local workstation
@@ -98,7 +98,6 @@ The order in `playbooks/workstation.yml` is deliberate. It establishes prerequis
 | 10 | `shell` | Configure Zsh, Oh My Zsh, plugins, and terminal tools |
 | 11 | `obsidian` | Install Obsidian from official release metadata |
 | 12 | `godot` | Install Godot and desktop integration |
-| 13 | `syncthing` | Install Syncthing and enable its user service |
 
 The playbook uses role ordering rather than Ansible `meta` dependencies. A role should not assume that an undeclared command or file exists unless it is supplied by an earlier role or handled within the role itself.
 
@@ -155,7 +154,6 @@ Workstation applications
 │   └── Zsh, Oh My Zsh, plugins, and terminal utilities
 ├── obsidian
 ├── godot
-└── syncthing
 ```
 
 ## 9. Repository structure
@@ -222,7 +220,7 @@ Administrative privileges are requested only for system-level tasks. User-scoped
 
 ## 12. Current scope and roadmap
 
-The current scope is a reproducible local bioinformatics workstation with the 13 roles listed above.
+The current scope is a reproducible local bioinformatics workstation with the 12 roles listed above.
 
 Possible future profiles or roles include:
 
