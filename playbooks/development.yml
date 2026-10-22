@@ -1,0 +1,9 @@
+---
+- name: Provision development tools
+  hosts: workstation
+  roles:
+    - apt
+    - common
+    - ansible
+    - vscode
+    - shell
