@@ -22,7 +22,6 @@ configurable, and safe to run repeatedly.
 | 10 | `shell` | Configure Zsh, Oh My Zsh, plugins, and terminal utilities. |
 | 11 | `obsidian` | Install Obsidian from its official release artifacts. |
 | 12 | `godot` | Install Godot with command-line and desktop integration. |
-| 13 | `syncthing` | Install Syncthing and enable its user service. |
 | 14 | `libresprite` | Install LibreSprite and expose its AppImage as a command. |
 
 The order is intentional: base packages and runtimes are installed before the
