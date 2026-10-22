@@ -1,0 +1,9 @@
+---
+- name: Provision optional desktop applications
+  hosts: workstation
+  roles:
+    - apt
+    - common
+    - obsidian
+    - godot
+    - libresprite
