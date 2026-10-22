@@ -18,7 +18,7 @@ Reviewed: `bootstrap.sh`, `playbooks/workstation.yml`, `roles/git/tasks/main.yml
 - `playbooks/workstation.yml` installs scientific and desktop roles in one run; a dedicated hardening role is absent.
 - `roles/git/tasks/main.yml` is empty. Identity and authentication need deliberate, separate implementation.
 - Docker role adds the user to the `docker` group. Membership can effectively provide root-level access: make opt-in, document the tradeoff, investigate rootless Docker where feasible.
-- Syncthing role enables its user service automatically. Introduce an explicit opt-in and allowlist for synchronized directories; synchronization is **not** backup.
+- Syncthing provisioning has been removed from Ocelotl by decision; synchronization is not a backup. Do not reintroduce automatic file synchronization without a separate design and review.
 - CI tests Ansible syntax, lint and a second provisioning run with `changed=0`. Extend it with security tests and isolated development deployment.
 - `.gitignore` excludes `.env` but is not a secret-leak prevention control. Extend exclusions and add secret scanning. Keep credentials out of Git history altogether.
 
@@ -75,7 +75,7 @@ Keep role implementations under `roles/`, not duplicated within `security/`.
 | File integrity | Hash sample datasets, track provenance | Verify declared SHA-256 manifests without changing source files |
 | Backups | Specify offline encrypted backups and restoration drill | Record evidence of actual test restores, not only configured jobs |
 
-Policies must be adapted to whether SSH/Syncthing/Docker are truly required. Do not blindly turn services off or change firewall defaults on remote machines.
+Policies must be adapted to whether SSH/Docker are truly required. Do not blindly turn services off or change firewall defaults on remote machines.
 
 ## Rollout approach
 
