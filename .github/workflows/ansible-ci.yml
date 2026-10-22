@@ -24,6 +24,9 @@ jobs:
             -i inventory/localhost.ini \
             playbooks/workstation.yml \
             --syntax-check
+          for profile in base development bioinformatics desktop; do
+            ansible-playbook -i inventory/localhost.ini "playbooks/${profile}.yml" --syntax-check
+          done
 
       - name: Run ansible-lint
         run: ansible-lint
