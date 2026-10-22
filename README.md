@@ -118,7 +118,6 @@ The main workstation playbook runs modular roles with clearly separated responsi
 | `obsidian` | Installs the latest available amd64 Debian package from official Obsidian releases |
 | `godot` | Installs the configured Godot release, command symlink, icon, and desktop entry |
 | `libresprite` | Installs LibreSprite for pixel-art and sprite development |
-| `syncthing` | Configures the official repository and enables the Syncthing user service |
 
 ---
 
@@ -151,7 +150,6 @@ bootstrap.sh
                    obsidian
                    godot
                    libresprite
-                   syncthing
                         |
                         +-- provisioned workstation
 ```
