@@ -33,7 +33,14 @@ ensure_ansible() {
 # ----------------------------------------------------------------------
 
 run_workstation_playbook() {
-    log_info "Starting workstation provisioning..."
+    local profile="${1:-full}"
+    local playbook=""
+    case "$profile" in
+        full) playbook="workstation" ;;
+        base|development|bioinformatics|desktop) playbook="$profile" ;;
+        *) log_error "Unknown installation profile: $profile"; return 2 ;;
+    esac
+    log_info "Starting Ocelotl profile: ${profile}"
 
     local become_exe="sudo"
 
@@ -46,6 +53,6 @@ run_workstation_playbook() {
     ANSIBLE_BECOME_EXE="${become_exe}" \
         ansible-playbook \
         -i "${SCRIPT_DIR}/inventory/localhost.ini" \
-        "${SCRIPT_DIR}/playbooks/workstation.yml" \
+        "${SCRIPT_DIR}/playbooks/${playbook}.yml" \
         --ask-become-pass
 }
