@@ -30,7 +30,7 @@
 - [ ] Install/configure SSH only if requested; evaluate effective server config and access needs.
 - [ ] Evaluate AppArmor status and available profiles.
 - [ ] Make automatic Docker-group membership opt-in; document privileged Docker access and rootless alternative.
-- [ ] Make Syncthing installation/service activation opt-in and allowlist synchronized paths.
+- [x] Remove Syncthing from Ocelotl provisioning and remove its role. Revisit any future synchronization solution as a separate opt-in project.
 - [ ] Plan LUKS2 at fresh OS installation; prohibit any automatic destructive storage operations.
 - [ ] Use Ansible `no_log` for secret-handling tasks; add config validation before sensitive changes.
 
@@ -68,4 +68,4 @@
 
 ## Immediate next change request
 
-Review `roles/git/tasks/main.yml`, `roles/docker/tasks/configure.yml`, `roles/syncthing/tasks/main.yml`, and `playbooks/workstation.yml`. Prepare a separate pull request for opt-in security profiles and non-destructive tests. Do not combine hardening changes with storage formatting.
+Review `roles/git/tasks/main.yml`, `roles/docker/tasks/configure.yml`, and `playbooks/workstation.yml`. Prepare a separate pull request for opt-in security profiles and non-destructive tests. Do not combine hardening changes with storage formatting.
