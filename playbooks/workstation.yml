@@ -23,3 +23,9 @@
     - role: libresprite
       tags:
         - libresprite
+
+    # Opt-in only: run with --tags ollama and choose ollama_profile.
+    - role: ollama
+      tags:
+        - never
+        - ollama
