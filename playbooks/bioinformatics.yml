@@ -1,0 +1,11 @@
+---
+- name: Provision bioinformatics environment
+  hosts: workstation
+  roles:
+    - apt
+    - common
+    - r
+    - conda
+    - java
+    - docker
+    - nextflow

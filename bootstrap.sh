@@ -22,6 +22,16 @@ source "${SCRIPT_DIR}/lib/init.sh"
 # ----------------------------------------------------------------------
 
 main() {
+    local profile="${1:-full}"
+    if [[ "$profile" == "--help" || "$profile" == "-h" ]]; then
+        printf "Usage: ./bootstrap.sh [full|base|development|bioinformatics|desktop]\n"
+        printf "Default: full. Security profile is not implemented yet.\n"
+        return 0
+    fi
+    case "$profile" in
+        full|base|development|bioinformatics|desktop) ;;
+        *) printf "Unknown profile: %s\n" "$profile" >&2; return 2 ;;
+    esac
     verify_os
     verify_sudo
     verify_internet
@@ -30,7 +40,7 @@ main() {
 
     ensure_ansible
 
-    run_workstation_playbook
+    run_workstation_playbook "$profile"
 }
 
 main "$@"

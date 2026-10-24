@@ -1,0 +1,7 @@
+---
+- name: Provision essential Ubuntu tools
+  hosts: workstation
+  roles:
+    - apt
+    - common
+    - ansible
