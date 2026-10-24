@@ -1,0 +1,9 @@
+---
+# Optional local AI installation. Select the profile explicitly at runtime.
+ollama_profile: laptop
+ollama_models:
+  laptop: qwen3.5:4b
+  workstation: qwen3.5:9b
+# Override independently with: -e ollama_model=qwen3.5:2b
+ollama_model: ""
+ollama_install_script_url: https://ollama.com/install.sh
