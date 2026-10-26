@@ -2,7 +2,10 @@
 - name: Read recent Obsidian releases metadata
   ansible.builtin.uri:
     url: "{{ obsidian_github_api_url }}"
+    headers: "{{ {'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' ~ lookup('ansible.builtin.env', 'GITHUB_PAT')} if lookup('ansible.builtin.env', 'GITHUB_PAT') | length > 0 else {'Accept': 'application/vnd.github+json'} }}"
     return_content: true
+    status_code: 200
+  no_log: true
   register: obsidian_releases
 
 - name: Collect Obsidian Debian package URLs
