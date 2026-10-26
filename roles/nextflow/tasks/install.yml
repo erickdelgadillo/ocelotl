@@ -5,7 +5,9 @@
       {{ nextflow_release_api }}/{{ 'latest'
       if nextflow_version == 'latest'
       else 'tags/' ~ nextflow_version }}
-    headers: "{{ {'Authorization': 'Bearer ' ~ lookup('ansible.builtin.env', 'GITHUB_PAT')} if lookup('ansible.builtin.env', 'GITHUB_PAT') | length > 0 else {} }}"
+    headers: >-
+      {{ {'Authorization': 'Bearer ' ~ lookup('ansible.builtin.env', 'GITHUB_PAT')}
+      if lookup('ansible.builtin.env', 'GITHUB_PAT') | length > 0 else {} }}
     return_content: true
     status_code: 200
   register: nextflow_release
@@ -15,7 +17,9 @@
 - name: Select Nextflow launcher release asset
   ansible.builtin.set_fact:
     nextflow_release_tag: "{{ nextflow_release.json.tag_name }}"
-    nextflow_launcher_assets: "{{ nextflow_release.json.assets | selectattr('name', 'equalto', 'nextflow') | list }}"
+    nextflow_launcher_assets: >-
+      {{ nextflow_release.json.assets
+      | selectattr('name', 'equalto', 'nextflow') | list }}
 
 - name: Validate Nextflow launcher release asset
   ansible.builtin.assert:
@@ -49,19 +53,10 @@
     checksum: >-
       {{ 'sha256:' ~ nextflow_launcher_assets[0].digest.split(':', 1)[1]
       if nextflow_launcher_assets[0].digest | default('')
-      is match('^sha256:[0-9a-fA-F]{64}
+      is match('^sha256:[0-9a-fA-F]{64}$') else omit }}
   when: >-
     nextflow_installed.rc != 0 or
     nextflow_installed_version != (nextflow_release_tag | regex_replace('^v', ''))
-
-- name: Ensure Nextflow launcher is executable
-  become: true
-  ansible.builtin.file:
-    path: "{{ nextflow_install_path }}"
-    mode: '0755'
-    state: file
-) else omit }}
-  when: nextflow_installed.rc != 0 or nextflow_installed_version != (nextflow_release_tag | regex_replace('^v', ''))
 
 - name: Ensure Nextflow launcher is executable
   become: true
