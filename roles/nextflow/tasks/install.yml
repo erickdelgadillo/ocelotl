@@ -1,20 +1,51 @@
 ---
-- name: Check existing Nextflow launcher
-  ansible.builtin.stat:
-    path: "{{ nextflow_install_path }}"
-  register: nextflow_launcher
+- name: Resolve Nextflow release metadata
+  ansible.builtin.uri:
+    url: "{{ nextflow_release_api }}/{{ 'latest' if nextflow_version == 'latest' else 'tags/' ~ nextflow_version }}"
+    headers: "{{ {'Authorization': 'Bearer ' ~ lookup('ansible.builtin.env', 'GITHUB_PAT')} if lookup('ansible.builtin.env', 'GITHUB_PAT') | length > 0 else {} }}"
+    return_content: true
+    status_code: 200
+  register: nextflow_release
+  changed_when: false
+  no_log: "{{ lookup('ansible.builtin.env', 'GITHUB_PAT') | length > 0 }}"
 
-- name: Download Nextflow launcher when absent
+- name: Select Nextflow launcher release asset
+  ansible.builtin.set_fact:
+    nextflow_release_tag: "{{ nextflow_release.json.tag_name }}"
+    nextflow_launcher_assets: "{{ nextflow_release.json.assets | selectattr('name', 'equalto', 'nextflow') | list }}"
+
+- name: Validate Nextflow launcher release asset
+  ansible.builtin.assert:
+    that:
+      - nextflow_launcher_assets | length == 1
+      - nextflow_release_tag | length > 0
+    fail_msg: "The selected Nextflow release has no unambiguous launcher asset."
+
+- name: Check installed Nextflow version
+  ansible.builtin.command:
+    argv:
+      - "{{ nextflow_install_path }}"
+      - -version
+  register: nextflow_installed
+  changed_when: false
+  failed_when: false
+
+- name: Resolve installed Nextflow release version
+  ansible.builtin.set_fact:
+    nextflow_installed_version: "{{ (nextflow_installed.stdout ~ nextflow_installed.stderr) | regex_search('version\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') | default([], true) | first | default('') }}"
+
+- name: Download Nextflow launcher if version differs
   become: true
   ansible.builtin.get_url:
-    url: "{{ nextflow_download_url }}"
+    url: "{{ nextflow_launcher_assets[0].browser_download_url }}"
     dest: "{{ nextflow_install_path }}"
-    mode: "0755"
-  when: not nextflow_launcher.stat.exists
+    mode: '0755'
+    checksum: "{{ 'sha256:' ~ nextflow_launcher_assets[0].digest.split(':', 1)[1] if nextflow_launcher_assets[0].digest | default('') is match('^sha256:[0-9a-fA-F]{64}$') else omit }}"
+  when: nextflow_installed.rc != 0 or nextflow_installed_version != (nextflow_release_tag | regex_replace('^v', ''))
 
-- name: Ensure existing Nextflow launcher is executable
+- name: Ensure Nextflow launcher is executable
   become: true
   ansible.builtin.file:
     path: "{{ nextflow_install_path }}"
-    mode: "0755"
-  when: nextflow_launcher.stat.exists
+    mode: '0755'
+    state: file
