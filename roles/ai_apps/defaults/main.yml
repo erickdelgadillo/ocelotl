@@ -1,0 +1,13 @@
+---
+# Opt-in desktop AI clients. No credentials are managed.
+ai_apps_chatgpt: true
+ai_apps_claude: true
+ai_apps_perplexity: true
+# Browser-based launchers are a safe fallback for services without a pinned
+# and documented package distribution.
+ai_apps_browser_command: xdg-open
+ai_apps_launcher_directory: "{{ ansible_env.HOME }}/.local/share/applications"
+ai_apps_claude_key_url: https://downloads.claude.ai/claude-desktop/key.asc
+ai_apps_claude_key_path: /usr/share/keyrings/claude-desktop-archive-keyring.asc
+ai_apps_claude_key_fingerprint: 31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE
+ai_apps_claude_repo_url: https://downloads.claude.ai/claude-desktop/apt/stable
