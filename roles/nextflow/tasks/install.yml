@@ -1,7 +1,20 @@
 ---
-- name: Download Nextflow launcher
+- name: Check existing Nextflow launcher
+  ansible.builtin.stat:
+    path: "{{ nextflow_install_path }}"
+  register: nextflow_launcher
+
+- name: Download Nextflow launcher when absent
   become: true
   ansible.builtin.get_url:
     url: "{{ nextflow_download_url }}"
     dest: "{{ nextflow_install_path }}"
     mode: "0755"
+  when: not nextflow_launcher.stat.exists
+
+- name: Ensure existing Nextflow launcher is executable
+  become: true
+  ansible.builtin.file:
+    path: "{{ nextflow_install_path }}"
+    mode: "0755"
+  when: nextflow_launcher.stat.exists
