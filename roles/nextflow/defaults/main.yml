@@ -1,8 +1,5 @@
 ---
-# Nextflow
-
+# Version can be a release tag (e.g. v25.04.8) or "latest".
 nextflow_version: latest
-
-nextflow_download_url: "https://github.com/nextflow-io/nextflow/releases/latest/download/nextflow"
-
-nextflow_install_path: "/usr/local/bin/nextflow"
+nextflow_release_api: https://api.github.com/repos/nextflow-io/nextflow/releases
+nextflow_install_path: /usr/local/bin/nextflow
