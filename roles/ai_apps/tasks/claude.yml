@@ -1,0 +1,45 @@
+---
+- name: Install Claude repository prerequisites
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - gnupg
+    state: present
+  become: true
+
+- name: Download official Claude repository signing key
+  ansible.builtin.get_url:
+    url: "{{ ai_apps_claude_key_url }}"
+    dest: "{{ ai_apps_claude_key_path }}"
+    mode: '0644'
+  become: true
+
+- name: Inspect Claude signing key fingerprint
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --show-keys
+      - --with-colons
+      - "{{ ai_apps_claude_key_path }}"
+  register: ai_apps_claude_key_inspection
+  changed_when: false
+
+- name: Verify trusted Claude signing key fingerprint
+  ansible.builtin.assert:
+    that:
+      - "('fpr:' ~ ai_apps_claude_key_fingerprint ~ ':') in ai_apps_claude_key_inspection.stdout"
+    fail_msg: "Claude signing key fingerprint does not match Anthropic documentation."
+
+- name: Configure official Claude APT repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ ai_apps_claude_key_path }}] {{ ai_apps_claude_repo_url }} stable main"
+    filename: claude-desktop
+    state: present
+    update_cache: true
+  become: true
+
+- name: Install Claude Desktop
+  ansible.builtin.apt:
+    name: claude-desktop
+    state: present
+  become: true
