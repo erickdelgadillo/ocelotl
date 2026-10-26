@@ -27,7 +27,7 @@
 - name: Verify trusted Claude signing key fingerprint
   ansible.builtin.assert:
     that:
-      - "('fpr:' ~ ai_apps_claude_key_fingerprint ~ ':') in ai_apps_claude_key_inspection.stdout"
+      - "ai_apps_claude_key_fingerprint in ai_apps_claude_key_inspection.stdout"
     fail_msg: "Claude signing key fingerprint does not match Anthropic documentation."
 
 - name: Configure official Claude APT repository
