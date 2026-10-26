@@ -1,0 +1,6 @@
+---
+- name: Install optional desktop AI applications
+  hosts: workstation
+  gather_facts: true
+  roles:
+    - ai_apps
