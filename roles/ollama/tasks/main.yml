@@ -46,25 +46,79 @@
   changed_when: false
   failed_when: false
 
-- name: Download official Ollama Linux installer
+- name: Check whether Ollama system user exists
+  ansible.builtin.command:
+    argv:
+      - id
+      - -u
+      - ollama
+  register: ollama_system_user
+  changed_when: false
+  failed_when: false
+
+- name: Check whether Ollama systemd unit exists
+  ansible.builtin.command:
+    argv:
+      - systemctl
+      - cat
+      - ollama.service
+  register: ollama_systemd_unit
+  changed_when: false
+  failed_when: false
+
+- name: Determine whether Ollama installation needs repair
+  ansible.builtin.set_fact:
+    ollama_needs_install: >-
+      {{ ollama_executable.rc != 0
+      or ollama_system_user.rc != 0
+      or ollama_systemd_unit.rc != 0 }}
+
+- name: Download official Ollama Linux installer when needed
   ansible.builtin.get_url:
     url: "{{ ollama_install_script_url }}"
     dest: /tmp/ocelotl-ollama-install.sh
     mode: '0700'
-  when: ollama_executable.rc != 0
+    force: true
+    timeout: 60
+  register: ollama_installer_download
+  until: ollama_installer_download is succeeded
+  retries: 3
+  delay: 5
+  when: ollama_needs_install | bool
 
-- name: Install Ollama using official Linux installer
+- name: Install or repair Ollama using official Linux installer
   ansible.builtin.command:
     argv:
       - /bin/sh
       - /tmp/ocelotl-ollama-install.sh
   become: true
-  when: ollama_executable.rc != 0
+  register: ollama_install_result
+  until: ollama_install_result.rc == 0
+  retries: 3
+  delay: 10
+  when: ollama_needs_install | bool
   changed_when: true
+
+- name: Verify Ollama system user after installation
+  ansible.builtin.command:
+    argv:
+      - id
+      - -u
+      - ollama
+  changed_when: false
+
+- name: Verify Ollama systemd unit after installation
+  ansible.builtin.command:
+    argv:
+      - systemctl
+      - cat
+      - ollama.service
+  changed_when: false
 
 - name: Ensure Ollama service is running
   ansible.builtin.systemd_service:
     name: ollama
+    daemon_reload: true
     enabled: true
     state: started
   become: true
