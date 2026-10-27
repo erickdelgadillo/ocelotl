@@ -25,7 +25,7 @@ jobs:
             playbooks/workstation.yml \
             --syntax-check
           ansible-playbook -i inventory/localhost.ini playbooks/ai-apps.yml --syntax-check
-          for profile in base development bioinformatics desktop; do
+          for profile in base development bioinformatics desktop ai; do
             ansible-playbook -i inventory/localhost.ini "playbooks/${profile}.yml" --syntax-check
           done
 
