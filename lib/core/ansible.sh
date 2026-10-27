@@ -37,7 +37,7 @@ run_workstation_playbook() {
     local playbook=""
     case "$profile" in
         full) playbook="workstation" ;;
-        base|development|bioinformatics|desktop) playbook="$profile" ;;
+        base|development|bioinformatics|desktop|ai) playbook="$profile" ;;
         *) log_error "Unknown installation profile: $profile"; return 2 ;;
     esac
     log_info "Starting Ocelotl profile: ${profile}"

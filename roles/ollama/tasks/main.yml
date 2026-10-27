@@ -1,18 +1,47 @@
 ---
-- name: Validate Ollama hardware profile
+- name: Validate Ollama profile
   ansible.builtin.assert:
     that:
-      - ollama_profile in ollama_models
-    fail_msg: "Select ollama_profile=laptop or ollama_profile=workstation."
+      - ollama_profile in ['auto', 'cpu', 'laptop', 'workstation']
+    fail_msg: "Choose auto, cpu, laptop or workstation."
 
-- name: Resolve local model selection
+- name: Read NVIDIA GPU memory if available
+  ansible.builtin.command:
+    argv:
+      - nvidia-smi
+      - --query-gpu=memory.total
+      - --format=csv,noheader,nounits
+  register: ollama_gpu_memory
+  changed_when: false
+  failed_when: false
+  when: ollama_profile == 'auto' and (ollama_model | length == 0)
+
+- name: Resolve GPU memory
+  ansible.builtin.set_fact:
+    ollama_gpu_vram_mb: >-
+      {{ (ollama_gpu_memory.stdout_lines | default([])
+      | first | default('0') | trim) | int }}
+  when: ollama_profile == 'auto' and (ollama_model | length == 0)
+
+- name: Resolve Ollama model profile
+  ansible.builtin.set_fact:
+    ollama_effective_profile: >-
+      {{ ('workstation' if (ollama_gpu_vram_mb | int >= 12000)
+      else 'laptop' if (ollama_gpu_vram_mb | int >= 6000)
+      else 'cpu') if ollama_profile == 'auto' else ollama_profile }}
+  when: ollama_model | length == 0
+
+- name: Select Ollama model
   ansible.builtin.set_fact:
     ollama_selected_model: >-
-      {{ ollama_model if (ollama_model | length > 0)
-         else ollama_models[ollama_profile] }}
+      {{ ollama_model if ollama_model | length > 0
+      else ollama_models[ollama_effective_profile] }}
 
 - name: Check for existing Ollama executable
-  ansible.builtin.command: which ollama
+  ansible.builtin.command:
+    argv:
+      - which
+      - ollama
   register: ollama_executable
   changed_when: false
   failed_when: false
@@ -21,11 +50,14 @@
   ansible.builtin.get_url:
     url: "{{ ollama_install_script_url }}"
     dest: /tmp/ocelotl-ollama-install.sh
-    mode: "0700"
+    mode: '0700'
   when: ollama_executable.rc != 0
 
 - name: Install Ollama using official Linux installer
-  ansible.builtin.command: /bin/sh /tmp/ocelotl-ollama-install.sh
+  ansible.builtin.command:
+    argv:
+      - /bin/sh
+      - /tmp/ocelotl-ollama-install.sh
   become: true
   when: ollama_executable.rc != 0
   changed_when: true
@@ -46,6 +78,7 @@
   register: ollama_existing_model
   changed_when: false
   failed_when: false
+  when: ollama_pull_model | bool
 
 - name: Download selected local model
   ansible.builtin.command:
@@ -53,7 +86,9 @@
       - ollama
       - pull
       - "{{ ollama_selected_model }}"
-  when: ollama_existing_model.rc != 0
+  when:
+    - ollama_pull_model | bool
+    - ollama_existing_model.rc != 0
   changed_when: true
 
 - name: Verify selected local model
@@ -63,3 +98,4 @@
       - show
       - "{{ ollama_selected_model }}"
   changed_when: false
+  when: ollama_pull_model | bool
