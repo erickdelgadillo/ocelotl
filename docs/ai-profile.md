@@ -58,6 +58,15 @@ ansible-lint
 Run provisioning twice on a real Ubuntu machine and inspect the second
 `PLAY RECAP` for `changed=0`. The CI tests syntax and lint for the
 AI playbook, but cannot safely provision third-party GUI software or download
-large models on GitHub's hosted runner. The official Ollama installer is
-executed only when Ollama is absent; inspect its remote script before opting in.
+large models on GitHub's hosted runner. The official Ollama installer is executed when the executable, the `ollama` system user, or the systemd unit is absent. Interrupted installs are repaired on the next run. Installer download and execution each have at most three attempts; a failed repair stops provisioning. Inspect the remote script before opting in. The upstream binary archive is downloaded by that installer, so Ocelotl cannot independently verify its checksum.
 No API keys, model sessions, or credentials are stored.
+
+
+## Recovery test (real Ubuntu host)
+
+1. After installing Ollama, run `./bootstrap.sh ai` again and confirm `changed=0`.
+2. To simulate a missing service **only on a disposable test host**, remove/disable its unit, then rerun the AI profile; verify that the official installer restores the service and user.
+3. Confirm `systemctl is-active ollama`, `id ollama`, and `ollama list`.
+4. Simulate a download interruption only in an isolated test environment; verify bounded retries and failure rather than a falsely successful install.
+
+The hosted CI syntax-checks AI provisioning but does not run these destructive or multi-GB integration scenarios.
