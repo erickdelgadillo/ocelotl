@@ -24,12 +24,12 @@ source "${SCRIPT_DIR}/lib/init.sh"
 main() {
     local profile="${1:-full}"
     if [[ "$profile" == "--help" || "$profile" == "-h" ]]; then
-        printf "Usage: ./bootstrap.sh [full|base|development|bioinformatics|desktop]\n"
+        printf "Usage: ./bootstrap.sh [full|base|development|bioinformatics|desktop|ai]\n"
         printf "Default: full. Security profile is not implemented yet.\n"
         return 0
     fi
     case "$profile" in
-        full|base|development|bioinformatics|desktop) ;;
+        full|base|development|bioinformatics|desktop|ai) ;;
         *) printf "Unknown profile: %s\n" "$profile" >&2; return 2 ;;
     esac
     verify_os
