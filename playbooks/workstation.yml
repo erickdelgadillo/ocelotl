@@ -24,8 +24,16 @@
       tags:
         - libresprite
 
-    # Opt-in only: run with --tags ollama and choose ollama_profile.
+    # Full installs AI only with OCELOTL_ENABLE_AI=1.
+    # The model pull is a separate opt-in (OCELOTL_PULL_MODEL=1).
     - role: ollama
+      vars:
+        ollama_pull_model: "{{ lookup('env', 'OCELOTL_PULL_MODEL') | bool }}"
+      when: lookup('env', 'OCELOTL_ENABLE_AI') | bool
       tags:
-        - never
         - ollama
+
+    - role: ai_apps
+      when: lookup('env', 'OCELOTL_ENABLE_AI') | bool
+      tags:
+        - ai_apps
