@@ -1,0 +1,33 @@
+---
+- name: Require Ubuntu desktop environment
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution == 'Ubuntu'
+      - ansible_architecture in ['x86_64', 'aarch64']
+    fail_msg: "AI desktop apps currently support Ubuntu on x86_64 or aarch64."
+
+- name: Install desktop launcher prerequisite
+  ansible.builtin.apt:
+    name: xdg-utils
+    state: present
+  become: true
+  when: ai_apps_chatgpt | bool or ai_apps_perplexity | bool
+
+- name: Create desktop launcher directory
+  ansible.builtin.file:
+    path: "{{ ai_apps_launcher_directory }}"
+    state: directory
+    mode: '0755'
+  when: ai_apps_chatgpt | bool or ai_apps_perplexity | bool
+
+- name: Configure ChatGPT web launcher
+  ansible.builtin.include_tasks: chatgpt.yml
+  when: ai_apps_chatgpt | bool
+
+- name: Install official Claude Desktop beta
+  ansible.builtin.include_tasks: claude.yml
+  when: ai_apps_claude | bool
+
+- name: Configure Perplexity web launcher
+  ansible.builtin.include_tasks: perplexity.yml
+  when: ai_apps_perplexity | bool

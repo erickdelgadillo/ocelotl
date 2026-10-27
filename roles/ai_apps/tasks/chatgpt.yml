@@ -1,0 +1,17 @@
+---
+# Uses official web app; native Linux package is intentionally not downloaded
+# until its repository metadata and signing procedure are documented/verified.
+- name: Create ChatGPT desktop launcher
+  ansible.builtin.copy:
+    dest: "{{ ai_apps_launcher_directory }}/ocelotl-chatgpt.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Version=1.0
+      Type=Application
+      Name=ChatGPT (Web)
+      Comment=Official ChatGPT web application
+      Exec={{ ai_apps_browser_command }} https://chatgpt.com/
+      Icon=web-browser
+      Terminal=false
+      Categories=Network;Utility;

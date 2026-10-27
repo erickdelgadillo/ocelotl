@@ -24,6 +24,7 @@ jobs:
             -i inventory/localhost.ini \
             playbooks/workstation.yml \
             --syntax-check
+          ansible-playbook -i inventory/localhost.ini playbooks/ai-apps.yml --syntax-check
           for profile in base development bioinformatics desktop; do
             ansible-playbook -i inventory/localhost.ini "playbooks/${profile}.yml" --syntax-check
           done
@@ -31,13 +32,26 @@ jobs:
       - name: Run ansible-lint
         run: ansible-lint
 
+      - name: Pin Nextflow release for idempotence checks
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag=$(curl --fail --silent --show-error \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/nextflow-io/nextflow/releases/latest | jq -r '.tag_name')
+          test -n "$tag" && test "$tag" != "null"
+          echo "NEXTFLOW_PIN=$tag" >> "$GITHUB_ENV"
+
       - name: First provisioning run
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ansible-playbook \
             -i inventory/localhost.ini \
-            playbooks/workstation.yml
+            playbooks/workstation.yml \
+            -e "nextflow_version=$NEXTFLOW_PIN"
 
       - name: Second provisioning run
         env:
@@ -47,6 +61,7 @@ jobs:
           ansible-playbook \
             -i inventory/localhost.ini \
             playbooks/workstation.yml \
+            -e "nextflow_version=$NEXTFLOW_PIN" \
             | tee idempotence.log
 
       - name: Check idempotence
