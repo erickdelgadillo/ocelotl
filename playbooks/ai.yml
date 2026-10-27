@@ -1,0 +1,6 @@
+---
+- name: Provision AI tools on Ubuntu
+  hosts: workstation
+  roles:
+    - role: ollama
+    - role: ai_apps
