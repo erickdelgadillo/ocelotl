@@ -28,8 +28,12 @@
     # The model pull is a separate opt-in (OCELOTL_PULL_MODEL=1).
     - role: ollama
       vars:
-        ollama_pull_model: "{{ lookup('env', 'OCELOTL_PULL_MODEL') | bool }}"
-      when: lookup('env', 'OCELOTL_ENABLE_AI') | bool
+        ollama_pull_model: >-
+          {{ (lookup('env', 'OCELOTL_PULL_MODEL') | bool)
+          or ('ollama' in ansible_run_tags) }}
+      when: >-
+        (lookup('env', 'OCELOTL_ENABLE_AI') | bool)
+        or ('ollama' in ansible_run_tags)
       tags:
         - ollama
 
