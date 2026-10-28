@@ -114,10 +114,10 @@ The main workstation playbook runs modular roles with clearly separated responsi
 | `docker` | Installs Docker Engine, Buildx, and the Compose plugin; configures the user and service |
 | `nextflow` | Installs and verifies Nextflow |
 | `vscode` | Installs Visual Studio Code and configured Nextflow, YAML, and Ansible extensions |
-| `shell` | Installs Zsh, Oh My Zsh, plugins, and common terminal tools; manages `.zshrc` with backup |\n| `security_tools` | Installs VeraCrypt, KeePassXC, and Bitwarden Desktop without managing secrets |
+| `shell` | Installs Zsh, Oh My Zsh, plugins, and common terminal tools; manages `.zshrc` with backup, preserves core PATH, loads existing Conda initialization, and supports user settings in `.zshrc.local` |\n| `security_tools` | Installs VeraCrypt, KeePassXC, and Bitwarden Desktop without managing secrets |
 | `obsidian` | Installs the latest available amd64 Debian package from official Obsidian releases |
 | `godot` | Installs the configured Godot release, command symlink, icon, and desktop entry |
-| `libresprite` | Installs LibreSprite for pixel-art and sprite development |
+| `libresprite` | Installs LibreSprite for pixel-art and sprite development |\n| `ollama` | Optionally installs and manages local Ollama, detects GPU VRAM to select a model, and supports explicit model/profile overrides |\n| `ai_apps` | Optionally installs Claude Desktop Linux beta and ChatGPT/Perplexity web launchers (not native desktop apps) |
 
 ---
 
@@ -173,7 +173,7 @@ Run the bootstrap:
 ./bootstrap.sh
 ```
 
-The bootstrap performs host validation and starts Ansible provisioning.
+The bootstrap performs host validation and starts Ansible provisioning. It accepts `full` (default), `base`, `development`, `bioinformatics`, `desktop`, `ai`, and `security` profiles (`./bootstrap.sh --help`). The `security` profile installs security applications, not host hardening or automatic USB synchronization. The `ai` profile provisions Ollama and AI applications; Ollama model selection uses detected VRAM with configurable overrides. In `full`, AI roles require `OCELOTL_ENABLE_AI=1`, and model downloads additionally require `OCELOTL_PULL_MODEL=1`. ChatGPT and Perplexity entries are web launchers, not native Linux applications.
 
 When privilege escalation is required, Ansible requests the appropriate `sudo` credentials.
 
@@ -204,7 +204,7 @@ Pull requests and changes to `main` are automatically validated with GitHub Acti
 
 The **Quick CI** workflow runs on pull requests, pushes to `main`, and version tags. It checks bootstrap syntax/help, Ansible playbook syntax, `ansible-lint`, and Zsh startup regression tests without provisioning the workstation.
 
-The **Full Provisioning CI** workflow is manually triggered (`workflow_dispatch`) for heavyweight integration verification. It performs:
+The **Full Provisioning CI** workflow (`.github/workflows/ansible-ci.yml`) is manually triggered (`workflow_dispatch`) for heavyweight integration verification. Its full provisioning run disables VeraCrypt and Bitwarden downloads and does not exercise optional AI installation or model downloads; successful CI therefore does not establish those installations work on a physical workstation. It performs:
 
 - Ansible syntax validation with `ansible-playbook --syntax-check`
 - Static analysis with `ansible-lint`
