@@ -6,6 +6,16 @@ The project follows [Semantic Versioning](https://semver.org/). Changes that hav
 
 ## [Unreleased]
 
+### Release preparation (v1.2.0 candidate)
+
+- Separate fast PR/tag CI from manually triggered full provisioning and idempotence CI.
+- Include security profile and Shell startup regressions in fast checks.
+- Correct bootstrap `--help` to include security.
+- v1.2.0 is **not tagged or published yet**; the existing release record is a draft.
+
+Recent already-merged work includes security tooling (VeraCrypt, KeePassXC and Bitwarden), local AI provisioning, and shell/Conda PATH recovery. These remain unreleased until a tag is created.
+
+
 ### Added
 
 - Automated R environment provisioning, including R, optional RStudio Desktop, system dependencies, and configured CRAN, Bioconductor, and GitHub packages.

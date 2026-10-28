@@ -1,0 +1,38 @@
+name: Quick CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-and-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh
+          python -m pip install ansible ansible-lint jinja2
+      - name: Validate bootstrap interface
+        run: |
+          bash -n bootstrap.sh
+          ./bootstrap.sh --help | grep -F 'security'
+      - name: Validate playbook syntax
+        run: |
+          ansible-playbook -i inventory/localhost.ini playbooks/workstation.yml --syntax-check
+          ansible-playbook -i inventory/localhost.ini playbooks/ai-apps.yml --syntax-check
+          for profile in base development bioinformatics desktop ai security; do
+            ansible-playbook -i inventory/localhost.ini "playbooks/${profile}.yml" --syntax-check
+          done
+      - name: Lint Ansible
+        run: ansible-lint
+      - name: Run shell regression tests
+        run: python -m unittest discover -s tests -p 'test_shell_startup.py' -v
