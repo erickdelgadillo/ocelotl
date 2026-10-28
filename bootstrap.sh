@@ -29,7 +29,7 @@ main() {
         return 0
     fi
     case "$profile" in
-        full|base|development|bioinformatics|desktop|ai) ;;
+        full|base|development|bioinformatics|desktop|ai|security) ;;
         *) printf "Unknown profile: %s\n" "$profile" >&2; return 2 ;;
     esac
     verify_os
