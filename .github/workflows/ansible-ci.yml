@@ -51,7 +51,9 @@ jobs:
           ansible-playbook \
             -i inventory/localhost.ini \
             playbooks/workstation.yml \
-            -e "nextflow_version=$NEXTFLOW_PIN"
+            -e "nextflow_version=$NEXTFLOW_PIN" \
+            -e "security_tools_veracrypt=false" \
+            -e "security_tools_bitwarden=false"
 
       - name: Second provisioning run
         env:
@@ -62,6 +64,8 @@ jobs:
             -i inventory/localhost.ini \
             playbooks/workstation.yml \
             -e "nextflow_version=$NEXTFLOW_PIN" \
+            -e "security_tools_veracrypt=false" \
+            -e "security_tools_bitwarden=false" \
             | tee idempotence.log
 
       - name: Check idempotence
