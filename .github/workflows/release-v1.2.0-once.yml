@@ -1,0 +1,32 @@
+name: One-time v1.2.0 tag
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/release-v1.2.0-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+      - name: Tag the approved main commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --tags origin 'refs/tags/v1.2.0' >/dev/null 2>&1; then
+            echo "v1.2.0 already exists; not modifying it"
+            exit 0
+          fi
+          git tag -a v1.2.0 -m "Ocelotl v1.2.0"
+          git push origin refs/tags/v1.2.0
