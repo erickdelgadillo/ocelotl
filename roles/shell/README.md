@@ -16,7 +16,7 @@ The role:
 - Clones Oh My Zsh into the configured user directory at a pinned commit.
 - Clones `zsh-autosuggestions` and `zsh-syntax-highlighting` into Oh My Zsh's
   custom plugin directory at pinned commits.
-- Renders the `zshrc.j2` template as `~/.zshrc`.
+- Renders the `zshrc.j2` template as `~/.zshrc`, restoring essential system paths, sourcing an existing Miniforge/Miniconda/Anaconda `conda.sh` for `conda activate`, and optionally sourcing user-owned `~/.zshrc.local`.
 - Creates an Ansible backup before replacing an existing `.zshrc`.
 - Sets the configured user's login shell to `/usr/bin/zsh`.
 
@@ -101,7 +101,23 @@ The role manages `~/.zshrc` and changes the user's login shell to
 the rendered Ocelotl configuration becomes the active `.zshrc`.
 
 Review `templates/zshrc.j2` before running this role on a workstation with an
-existing customized Zsh setup.
+existing customized Zsh setup. Move desired customizations from Ansible's saved
+`.zshrc` backup to `~/.zshrc.local` (which Ocelotl never writes). Conda is
+initialized if an installation exists; it is not installed by the shell role.
+Other tools such as micromamba can be initialized in `.zshrc.local`.
+
+The template appends core system directories to Zsh's tied `path` array, preserving
+existing entries and avoiding duplicates. It does not intentionally replace PATH.
+After provisioning, open a **fresh interactive Zsh session** and check:
+
+```bash
+command -v ls dirname head
+conda --version
+conda activate base
+```
+
+If `conda activate` does not work, verify that your Conda installation provides
+`etc/profile.d/conda.sh` in one of the detected locations.
 
 ## Idempotence
 
