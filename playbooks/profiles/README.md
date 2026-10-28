@@ -23,4 +23,4 @@ For the standard launcher, `./bootstrap.sh base` or `./bootstrap.sh bioinformati
 
 **Important:** Docker role currently grants the invoking user membership of the `docker` group, which effectively grants root-level access. Review before running bioinformatics/full. Do not run these on the production workstation until evaluated on the clean test Ubuntu. Profiles do not erase data, encrypt disks, transfer scientific datasets, or set up GitHub authentication.
 
-`base` is the first validation target. `development`, `bioinformatics` and `desktop` may be run separately or sequentially; a role reused in multiple profiles should be idempotent. Test a second execution and confirm no unexpected changes.
+`base` is the first validation target. `development`, `bioinformatics`, `desktop` and `security` may be run separately or sequentially; a role reused in multiple profiles should be idempotent. Test a second execution and confirm no unexpected changes.
