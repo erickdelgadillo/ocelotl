@@ -1,0 +1,26 @@
+---
+# Security desktop tooling only. This role never manages credentials, vault
+# passwords, recovery codes, keyfiles, or removable-drive identifiers.
+security_tools_veracrypt: true
+security_tools_keepassxc: true
+security_tools_bitwarden: true
+
+security_tools_cache_dir: /var/cache/ocelotl/security
+
+security_tools_veracrypt_version: "1.26.30"
+security_tools_veracrypt_ubuntu_versions:
+  - "22.04"
+  - "24.04"
+  - "26.04"
+security_tools_veracrypt_filename: >-
+  veracrypt-{{ security_tools_veracrypt_version }}-Ubuntu-{{ ansible_distribution_version }}-amd64.deb
+security_tools_veracrypt_url: >-
+  https://github.com/veracrypt/VeraCrypt/releases/download/VeraCrypt_{{ security_tools_veracrypt_version }}/{{ security_tools_veracrypt_filename }}
+security_tools_veracrypt_checksum_url: >-
+  https://github.com/veracrypt/VeraCrypt/releases/download/VeraCrypt_{{ security_tools_veracrypt_version }}/veracrypt-{{ security_tools_veracrypt_version }}-sha256sum.txt
+
+security_tools_bitwarden_version: "2026.10.1"
+security_tools_bitwarden_filename: "Bitwarden-{{ security_tools_bitwarden_version }}-amd64.deb"
+security_tools_bitwarden_url: >-
+  https://github.com/bitwarden/clients/releases/download/desktop-v{{ security_tools_bitwarden_version }}/{{ security_tools_bitwarden_filename }}
+security_tools_bitwarden_sha256: "02cb6bc6a429d8d0da9fdf9d23739358165cf7b98a245783d6f641526f75b0a7"
