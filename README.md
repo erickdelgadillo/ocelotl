@@ -4,6 +4,7 @@
 ![Ansible](https://img.shields.io/badge/Ansible-automation-red)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
 [![Latest tag](https://img.shields.io/badge/latest%20tag-v1.0.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.0.0)
+![Next release](https://img.shields.io/badge/next%20release-v1.2.0%20planned-orange)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 > Build a reproducible scientific and bioinformatics workstation from a clean Ubuntu installation using Ansible.
