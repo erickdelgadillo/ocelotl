@@ -1,3 +1,11 @@
+# Restore system paths even if an inherited PATH is incomplete.
+# Zsh maintains PATH and path as tied parameters.
+path+=(
+  /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin
+  /sbin /bin /usr/games /usr/local/games /snap/bin
+)
+typeset -U path
+
 export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="robbyrussell"
@@ -8,7 +16,7 @@ plugins=(
 {% endfor %}
 )
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # History
 HIST_STAMPS="yyyy-mm-dd"
@@ -17,6 +25,29 @@ HIST_STAMPS="yyyy-mm-dd"
 if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
+
+# Initialize an existing Conda distribution without modifying startup files.
+# conda.sh defines the shell function required by `conda activate`.
+for _ocelotl_conda_sh in \
+  "$HOME/miniforge3/etc/profile.d/conda.sh" \
+  "$HOME/miniconda3/etc/profile.d/conda.sh" \
+  "$HOME/anaconda3/etc/profile.d/conda.sh"; do
+  if [[ -r "$_ocelotl_conda_sh" ]]; then
+    source "$_ocelotl_conda_sh"
+    break
+  fi
+done
+unset _ocelotl_conda_sh
+
+# Optional, user-owned configuration; never overwrite this file.
+# Use it for micromamba initialization and any private environment setup.
+if [[ -r "$HOME/.zshrc.local" ]]; then
+  source "$HOME/.zshrc.local"
+fi
+
+# User additions must not accidentally remove core operating-system commands.
+path+=( /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin )
+typeset -U path
 
 # Useful aliases
 alias ll="ls -lah"
