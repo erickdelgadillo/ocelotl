@@ -1,0 +1,60 @@
+---
+- name: Validate security tooling platform
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution == 'Ubuntu'
+      - ansible_architecture == 'x86_64'
+      - ansible_distribution_version in security_tools_veracrypt_ubuntu_versions
+    fail_msg: >-
+      security_tools currently supports Ubuntu
+      {{ security_tools_veracrypt_ubuntu_versions | join(', ') }}
+      on x86_64/amd64.
+
+- name: Create Ocelotl security package cache
+  ansible.builtin.file:
+    path: "{{ security_tools_cache_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  when: security_tools_veracrypt | bool or security_tools_bitwarden | bool
+
+- name: Install KeePassXC
+  ansible.builtin.apt:
+    name: keepassxc
+    state: present
+  become: true
+  when: security_tools_keepassxc | bool
+
+- name: Download verified VeraCrypt package
+  ansible.builtin.get_url:
+    url: "{{ security_tools_veracrypt_url }}"
+    dest: "{{ security_tools_cache_dir }}/{{ security_tools_veracrypt_filename }}"
+    checksum: "sha256:{{ security_tools_veracrypt_checksum_url }}"
+    mode: '0644'
+  become: true
+  when: security_tools_veracrypt | bool
+
+- name: Install VeraCrypt
+  ansible.builtin.apt:
+    deb: "{{ security_tools_cache_dir }}/{{ security_tools_veracrypt_filename }}"
+    state: present
+  become: true
+  when: security_tools_veracrypt | bool
+
+- name: Download verified Bitwarden Desktop package
+  ansible.builtin.get_url:
+    url: "{{ security_tools_bitwarden_url }}"
+    dest: "{{ security_tools_cache_dir }}/{{ security_tools_bitwarden_filename }}"
+    checksum: "sha256:{{ security_tools_bitwarden_sha256 }}"
+    mode: '0644'
+  become: true
+  when: security_tools_bitwarden | bool
+
+- name: Install Bitwarden Desktop
+  ansible.builtin.apt:
+    deb: "{{ security_tools_cache_dir }}/{{ security_tools_bitwarden_filename }}"
+    state: present
+  become: true
+  when: security_tools_bitwarden | bool
