@@ -1,0 +1,32 @@
+name: Shell startup regression
+
+on:
+  pull_request:
+    paths:
+      - 'roles/shell/**'
+      - 'tests/test_shell_startup.py'
+      - '.github/workflows/shell-startup.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'roles/shell/**'
+      - 'tests/test_shell_startup.py'
+      - '.github/workflows/shell-startup.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shell-startup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Zsh and template dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh
+          python -m pip install jinja2
+      - name: Check startup regression cases
+        run: python -m unittest discover -s tests -p 'test_shell_startup.py' -v
