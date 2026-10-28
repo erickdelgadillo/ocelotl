@@ -202,7 +202,9 @@ Changes should remain focused, preserve role idempotence, and update documentati
 
 Pull requests and changes to `main` are automatically validated with GitHub Actions.
 
-The CI workflow performs:
+The **Quick CI** workflow runs on pull requests, pushes to `main`, and version tags. It checks bootstrap syntax/help, Ansible playbook syntax, `ansible-lint`, and Zsh startup regression tests without provisioning the workstation.
+
+The **Full Provisioning CI** workflow is manually triggered (`workflow_dispatch`) for heavyweight integration verification. It performs:
 
 - Ansible syntax validation with `ansible-playbook --syntax-check`
 - Static analysis with `ansible-lint`
@@ -285,10 +287,10 @@ These items are not part of the current workstation playbook unless explicitly m
 The latest tagged release is:
 
 ```text
-v1.2.0
+v1.0.0
 ```
 
-Features merged since that tag are documented under [Unreleased](CHANGELOG) and remain unreleased until a new version tag and GitHub Release are approved and published.
+Version v1.2.0 is proposed for the next release; its GitHub Release currently exists only as a draft without a corresponding tag. Features merged since v1.0.0 are documented under [Unreleased](CHANGELOG) and remain unreleased until a new version tag and GitHub Release are approved and published.
 
 ---
 
