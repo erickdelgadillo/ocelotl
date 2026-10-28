@@ -114,7 +114,7 @@ The main workstation playbook runs modular roles with clearly separated responsi
 | `docker` | Installs Docker Engine, Buildx, and the Compose plugin; configures the user and service |
 | `nextflow` | Installs and verifies Nextflow |
 | `vscode` | Installs Visual Studio Code and configured Nextflow, YAML, and Ansible extensions |
-| `shell` | Installs Zsh, Oh My Zsh, plugins, and common terminal tools; manages `.zshrc` with backup |
+| `shell` | Installs Zsh, Oh My Zsh, plugins, and common terminal tools; manages `.zshrc` with backup |\n| `security_tools` | Installs VeraCrypt, KeePassXC, and Bitwarden Desktop without managing secrets |
 | `obsidian` | Installs the latest available amd64 Debian package from official Obsidian releases |
 | `godot` | Installs the configured Godot release, command symlink, icon, and desktop entry |
 | `libresprite` | Installs LibreSprite for pixel-art and sprite development |
