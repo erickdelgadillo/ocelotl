@@ -25,7 +25,7 @@ jobs:
             playbooks/workstation.yml \
             --syntax-check
           ansible-playbook -i inventory/localhost.ini playbooks/ai-apps.yml --syntax-check
-          for profile in base development bioinformatics desktop ai; do
+          for profile in base development bioinformatics desktop ai security; do
             ansible-playbook -i inventory/localhost.ini "playbooks/${profile}.yml" --syntax-check
           done
 
@@ -51,7 +51,9 @@ jobs:
           ansible-playbook \
             -i inventory/localhost.ini \
             playbooks/workstation.yml \
-            -e "nextflow_version=$NEXTFLOW_PIN"
+            -e "nextflow_version=$NEXTFLOW_PIN" \
+            -e "security_tools_veracrypt=false" \
+            -e "security_tools_bitwarden=false"
 
       - name: Second provisioning run
         env:
@@ -62,6 +64,8 @@ jobs:
             -i inventory/localhost.ini \
             playbooks/workstation.yml \
             -e "nextflow_version=$NEXTFLOW_PIN" \
+            -e "security_tools_veracrypt=false" \
+            -e "security_tools_bitwarden=false" \
             | tee idempotence.log
 
       - name: Check idempotence

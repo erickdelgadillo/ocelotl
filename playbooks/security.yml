@@ -1,0 +1,6 @@
+---
+- name: Provision security tools on Ubuntu
+  hosts: workstation
+  roles:
+    - apt
+    - security_tools

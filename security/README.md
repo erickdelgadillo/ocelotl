@@ -2,19 +2,19 @@
 
 > Security architecture, policies, and rollout plan for reproducible Ubuntu bioinformatics workstations.
 
-**Status:** Design / documentation only. No security controls are applied by this directory yet.
+**Status:** Security tooling implemented; host-hardening controls remain design / documentation only.
 
 ## Purpose and boundaries
 
 Ocelotl **configures** systems; Sentinel **audits** their effective state; SPECTRA **organizes** systems, projects and policy ownership. This directory records the security baseline, decisions, rollout stages, and acceptance criteria. It is **not** a repository for credentials, recovery keys, scientific datasets, or machine-specific private configuration.
 
-Targets: locally administered Ubuntu workstations, initially the clean development machine; later the scientific workstation after independently verified backups. No changes to existing roles or the workstation playbook are enabled by adding this directory.
+Targets: locally administered Ubuntu workstations, initially the clean development machine; later the scientific workstation after independently verified backups. The `security_tools` role installs selected user-facing security applications. Hardening changes remain separate and are not implied by installing these tools.
 
 ## Existing repository review (2026-10-22)
 
 Reviewed: `bootstrap.sh`, `playbooks/workstation.yml`, `roles/git/tasks/main.yml`, `roles/docker/tasks/configure.yml`, `roles/syncthing/tasks/main.yml`, `.gitignore`, `.github/workflows/ansible-ci.yml`, and architecture documentation.
 
-- Bootstrap verifies OS, sudo, Internet, Git and curl, then runs the entire workstation playbook. No separate minimal/security/research profile yet.
+- Bootstrap verifies OS, sudo, Internet, Git and curl. A dedicated `security` profile now installs the approved security tooling.
 - `playbooks/workstation.yml` installs scientific and desktop roles in one run; a dedicated hardening role is absent.
 - `roles/git/tasks/main.yml` is empty. Identity and authentication need deliberate, separate implementation.
 - Docker role adds the user to the `docker` group. Membership can effectively provide root-level access: make opt-in, document the tradeoff, investigate rootless Docker where feasible.
@@ -44,7 +44,7 @@ security/
 └── ROADMAP.md        # Prioritized tasks, tests and rollout gates
 ```
 
-**Future candidates (not implemented):**
+**Implemented:**\n- `../roles/security_tools/` — VeraCrypt, KeePassXC and Bitwarden Desktop; no credentials or vault contents are managed.\n- `../playbooks/security.yml` — explicitly invokable with `./bootstrap.sh security`.\n- The full workstation profile includes `security_tools`.\n- FreeFileSync remains a manual installation and is not managed by Ocelotl.\n\n**Future candidates (not implemented):**
 - `policies/` — versioned, non-secret policy YAML for Ocelotl and Sentinel
 - `tests/` — read-only acceptance tests and isolated VM checks
 - `examples/` — redacted sample local configuration
@@ -80,7 +80,7 @@ Policies must be adapted to whether SSH/Docker are truly required. Do not blindl
 ## Rollout approach
 
 1. Inventory current hardware/storage, backups, current repository state.
-2. Implement an opt-in **minimal base** playbook rather than running all scientific roles at once.
+2. Use installation profiles (`base`, `security`, and others) to stage provisioning rather than requiring the full workstation playbook for every change.
 3. Define policy schema and local encrypted secret delivery.
 4. Add security baseline role with check-mode support where possible.
 5. Implement basic Sentinel checks as a **separate project**.

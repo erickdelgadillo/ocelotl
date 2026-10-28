@@ -17,6 +17,11 @@
     - nextflow
     - vscode
     - shell
+
+    - role: security_tools
+      tags:
+        - security
+
     - obsidian
     - godot
 
