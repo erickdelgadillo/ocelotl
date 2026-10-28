@@ -24,8 +24,8 @@ source "${SCRIPT_DIR}/lib/init.sh"
 main() {
     local profile="${1:-full}"
     if [[ "$profile" == "--help" || "$profile" == "-h" ]]; then
-        printf "Usage: ./bootstrap.sh [full|base|development|bioinformatics|desktop|ai]\n"
-        printf "Default: full. Security profile is not implemented yet.\n"
+        printf "Usage: ./bootstrap.sh [full|base|development|bioinformatics|desktop|ai|security]\n"
+        printf "Default: full. Use security to install VeraCrypt, KeePassXC and Bitwarden.\n"
         return 0
     fi
     case "$profile" in
