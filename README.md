@@ -3,8 +3,7 @@
 [![Ansible CI](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml)
 ![Ansible](https://img.shields.io/badge/Ansible-automation-red)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
-[![Latest tag](https://img.shields.io/badge/latest%20tag-v1.0.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.0.0)
-![Next release](https://img.shields.io/badge/next%20release-v1.2.0%20planned-orange)
+[![Latest tag](https://img.shields.io/badge/latest%20tag-v1.2.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.2.0)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 > Build a reproducible scientific and bioinformatics workstation from a clean Ubuntu installation using Ansible.
@@ -285,13 +284,13 @@ These items are not part of the current workstation playbook unless explicitly m
 
 ## Release status
 
-The latest tagged release is:
+The latest Git tag is:
 
 ```text
-v1.0.0
+v1.2.0
 ```
 
-Version v1.2.0 is proposed for the next release; its GitHub Release currently exists only as a draft without a corresponding tag. Features merged since v1.0.0 are documented under [Unreleased](CHANGELOG) and remain unreleased until a new version tag and GitHub Release are approved and published.
+The annotated `v1.2.0` tag has been created. The corresponding GitHub Release is still a draft and has not been published; see the [CHANGELOG](CHANGELOG) for release history and subsequent changes.
 
 ---
 
