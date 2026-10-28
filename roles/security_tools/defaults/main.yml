@@ -17,7 +17,9 @@ security_tools_veracrypt_filename: >-
 security_tools_veracrypt_url: >-
   https://github.com/veracrypt/VeraCrypt/releases/download/VeraCrypt_{{ security_tools_veracrypt_version }}/{{ security_tools_veracrypt_filename }}
 security_tools_veracrypt_checksum_url: >-
-  https://github.com/veracrypt/VeraCrypt/releases/download/VeraCrypt_{{ security_tools_veracrypt_version }}/veracrypt-{{ security_tools_veracrypt_version }}-sha256sum.txt
+  https://github.com/veracrypt/VeraCrypt/releases/download/
+  VeraCrypt_{{ security_tools_veracrypt_version }}/
+  veracrypt-{{ security_tools_veracrypt_version }}-sha256sum.txt
 
 security_tools_bitwarden_version: "2026.10.1"
 security_tools_bitwarden_filename: "Bitwarden-{{ security_tools_bitwarden_version }}-amd64.deb"
