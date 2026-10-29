@@ -1,308 +1,37 @@
 # Ocelotl 🐆
 
-[![Ansible CI](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml)
-![Ansible](https://img.shields.io/badge/Ansible-automation-red)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420)
-[![Latest tag](https://img.shields.io/badge/latest%20tag-v1.2.0-blue)](https://github.com/erickdelgadillo/ocelotl/tree/v1.2.0)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Quick CI](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/erickdelgadillo/ocelotl/actions/workflows/ansible-ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-> Build a reproducible scientific and bioinformatics workstation from a clean Ubuntu installation using Ansible.
+Reproducible Ubuntu workstation provisioning for bioinformatics, research, and development with Ansible.
 
-Ocelotl turns a new Ubuntu workstation into a ready-to-use scientific computing environment.
+**Requirements:** Ubuntu 22.04, 24.04 or 26.04 LTS; `sudo` access. The full workstation profile targets x86_64/amd64.
 
-A small Bash bootstrap validates the host, installs Ansible Core when necessary, and launches a modular Ansible playbook that provisions scientific software, development tools, desktop applications, and workflow infrastructure.
-
----
-
-## Supported platform
-
-| Requirement | Supported |
-| --- | --- |
-| Operating system | Ubuntu 22.04 LTS, 24.04 LTS, and 26.04 LTS |
-| Full workstation architecture | x86_64 / amd64 |
-| Execution target | Local workstation |
-| Privileges | User account with `sudo` access |
-
-The bootstrap rejects unsupported Ubuntu versions before provisioning.
-
-The complete workstation profile is currently limited to x86_64/amd64 because some desktop applications use architecture-specific artifacts.
-
----
-
-## Development and deployment environments
-
-Ocelotl is developed as a real workstation-provisioning project rather than as an isolated Ansible exercise.
-
-Changes are primarily developed and validated on a Linux laptop before being applied to a substantially more powerful custom-built workstation used for scientific computing and bioinformatics.
-
-This provides a practical development → validation → deployment workflow across two machines with very different hardware capabilities.
-
-### Development system
-
-Ocelotl is primarily developed and validated on an:
-
-**ASUS ROG Strix G513IM**
-
-- **CPU:** AMD Ryzen 7 4800H (8 cores / 16 threads)
-- **Memory:** 64 GB DDR4 RAM, 3200 MT/s
-- **Discrete GPU:** NVIDIA GeForce RTX 3060 Laptop GPU, 6 GB VRAM
-- **Integrated GPU:** AMD Radeon Vega Graphics
-- **Storage:** 2 × 1 TB NVMe SSDs
-- **Operating system:** Ubuntu 26.04 LTS
-- **Architecture:** x86_64
-- **Storage configuration:** encrypted Ubuntu installation using LUKS/LVM, alongside Windows and a separate NTFS data volume
-
-The laptop is used for Ansible role development, configuration changes, documentation, testing, and validation before infrastructure changes are applied to the main workstation.
-
-### Scientific workstation
-
-Ocelotl is ultimately deployed on a custom-built scientific workstation **designed, assembled, and configured by the repository author**.
-
-- **CPU:** AMD Ryzen 9 9950X3D (16 cores / 32 threads)
-- **Motherboard:** ASUS ROG Strix B650E-E Gaming WiFi
-- **Memory:** 192 GB DDR5 RAM, 5000 MT/s
-- **Discrete GPU:** NVIDIA GeForce RTX 4070 Ti
-- **Integrated GPU:** AMD Radeon Graphics (RDNA 2, 2 CUs)
-- **Storage:** 1 TB NVMe Gen5 SSD + 2 TB NVMe Gen4 SSD + 1 TB NVMe Gen4 SSD + 2 × 2 TB SATA SSDs
-- **Operating system:** Ubuntu 26.04 LTS
-- **Architecture:** x86_64
-- **Storage configuration:** encrypted Ubuntu installation using LUKS/LVM, alongside Windows and a separate NTFS data volume
-
-The workstation is intended for substantially heavier computational workloads, including large biological datasets, local bioinformatics pipelines, Nextflow/nf-core workflows, and other CPU-, memory-, and GPU-intensive analyses.
-
-Ocelotl provides the reproducible software layer on top of this hardware. Instead of rebuilding the scientific environment manually after system changes or reinstallations, the desired workstation configuration is expressed as code and managed through Ansible.
-
-```text
-Development laptop
-      |
-      |  develop and validate
-      v
-Git / GitHub
-      |
-      |  versioned configuration
-      v
-Ocelotl / Ansible
-      |
-      |  provision
-      v
-Custom scientific workstation
-      |
-      +-- R / Bioconductor
-      +-- Conda / Bioconda
-      +-- Docker
-      +-- Nextflow / nf-core
-      +-- development tools
-      +-- scientific applications
-```
-
-This separation reduces the risk of testing unfinished infrastructure changes directly on the main computational workstation while demonstrating that the same provisioning model can be applied across heterogeneous Linux hardware.
-
----
-
-## What Ocelotl provisions
-
-The main workstation playbook runs modular roles with clearly separated responsibilities.
-
-| Role | Capability |
-| --- | --- |
-| `apt` | Refreshes the APT package cache |
-| `common` | Installs shared build tools and command-line prerequisites |
-| `ansible` | Installs Ansible development tooling, including `ansible-lint` |
-| `r` | Installs R, optional RStudio Desktop, system libraries, and configured CRAN, Bioconductor, and GitHub packages |
-| `conda` | Installs and configures Miniforge with conda-forge and bioconda channels |
-| `java` | Installs and verifies OpenJDK for JVM-based workflows |
-| `docker` | Installs Docker Engine, Buildx, and the Compose plugin; configures the user and service |
-| `nextflow` | Installs and verifies Nextflow |
-| `vscode` | Installs Visual Studio Code and configured Nextflow, YAML, and Ansible extensions |
-| `shell` | Installs Zsh, Oh My Zsh, plugins, and common terminal tools; manages `.zshrc` with backup, preserves core PATH, loads existing Conda initialization, and supports user settings in `.zshrc.local` |\n| `security_tools` | Installs VeraCrypt, KeePassXC, and Bitwarden Desktop without managing secrets |
-| `obsidian` | Installs the latest available amd64 Debian package from official Obsidian releases |
-| `godot` | Installs the configured Godot release, command symlink, icon, and desktop entry |
-| `libresprite` | Installs LibreSprite for pixel-art and sprite development |\n| `ollama` | Optionally installs and manages local Ollama, detects GPU VRAM to select a model, and supports explicit model/profile overrides |\n| `ai_apps` | Optionally installs Claude Desktop Linux beta and ChatGPT/Perplexity web launchers (not native desktop apps) |
-
----
-
-## Provisioning flow
-
-```text
-bootstrap.sh
-    |
-    +-- validate Ubuntu, sudo, network, Git, and curl
-    |
-    +-- install or verify Ansible Core
-    |
-    +-- run playbooks/workstation.yml
-            |
-            +-- base system
-            |      apt
-            |      common
-            |      ansible
-            |
-            +-- scientific stack
-            |      r
-            |      conda
-            |      java
-            |      docker
-            |      nextflow
-            |
-            +-- workstation tools
-                   vscode
-                   shell
-                   obsidian
-                   godot
-                   libresprite
-                        |
-                        +-- provisioned workstation
-```
-
-See the [architecture guide](docs/architecture.md) for design decisions, role ordering, repository structure, and extension guidelines.
-
----
-
-## Installation
-
-Clone the repository:
+## Install
 
 ```bash
 git clone https://github.com/erickdelgadillo/ocelotl.git
 cd ocelotl
+./bootstrap.sh              # full workstation
 ```
 
-Run the bootstrap:
+Use `./bootstrap.sh --help` for options. Individual profiles:
 
-```bash
-./bootstrap.sh
-```
+| Profile | Command | Purpose |
+| --- | --- | --- |
+| Base | `./bootstrap.sh base` | Core tools and Ansible |
+| Development | `./bootstrap.sh development` | Editor and shell |
+| Bioinformatics | `./bootstrap.sh bioinformatics` | R, Conda, Java, Docker, Nextflow |
+| Desktop | `./bootstrap.sh desktop` | Desktop applications |
+| AI | `./bootstrap.sh ai` | Ollama and AI application launchers |
+| Security | `./bootstrap.sh security` | VeraCrypt, KeePassXC, Bitwarden |
+| Full | `./bootstrap.sh full` | Complete workstation |
 
-The bootstrap performs host validation and starts Ansible provisioning. It accepts `full` (default), `base`, `development`, `bioinformatics`, `desktop`, `ai`, and `security` profiles (`./bootstrap.sh --help`). The `security` profile installs security applications, not host hardening or automatic USB synchronization. The `ai` profile provisions Ollama and AI applications; Ollama model selection uses detected VRAM with configurable overrides. In `full`, AI roles require `OCELOTL_ENABLE_AI=1`, and model downloads additionally require `OCELOTL_PULL_MODEL=1`. ChatGPT and Perplexity entries are web launchers, not native Linux applications.
+**Important:** In `full`, optional AI provisioning requires `OCELOTL_ENABLE_AI=1`; downloading an Ollama model additionally requires `OCELOTL_PULL_MODEL=1`. ChatGPT and Perplexity are web launchers, not native Linux apps. The security profile installs applications; it does **not** harden the operating system, encrypt disks or synchronize USB drives. Docker group membership grants root-equivalent privileges.
 
-When privilege escalation is required, Ansible requests the appropriate `sudo` credentials.
+## Validation
 
-Roles are designed to converge toward the desired workstation state, allowing provisioning to be safely repeated after interrupted or partial installations.
+Quick CI checks syntax, lint and shell regressions. Full provisioning CI is manually triggered and checks repeatability (`changed=0` on the second run); it does not verify optional AI/model downloads or all security application downloads on real hardware.
 
----
+See [profiles](playbooks/profiles/README.md), [roles](roles/README.md), [architecture](docs/architecture.md), [security](security/README.md) and [CHANGELOG](CHANGELOG).
 
-## Project principles
-
-Ocelotl is developed around several principles:
-
-- Reproducible workstation provisioning
-- Modular Ansible roles with explicit responsibilities
-- Idempotent operations that are safe to repeat
-- Verification of installed components where practical
-- Configuration through role defaults rather than scattered hard-coded values
-- Minimal manual intervention after bootstrap
-- No credentials or private keys stored in the repository
-- Documentation kept synchronized with the implemented workstation profile
-
-Changes should remain focused, preserve role idempotence, and update documentation whenever supported platforms, tools, or provisioning behavior change.
-
----
-
-## Continuous integration
-
-Pull requests and changes to `main` are automatically validated with GitHub Actions.
-
-The **Quick CI** workflow runs on pull requests, pushes to `main`, and version tags. It checks bootstrap syntax/help, Ansible playbook syntax, `ansible-lint`, and Zsh startup regression tests without provisioning the workstation.
-
-The **Full Provisioning CI** workflow (`.github/workflows/ansible-ci.yml`) is manually triggered (`workflow_dispatch`) for heavyweight integration verification. Its full provisioning run disables VeraCrypt and Bitwarden downloads and does not exercise optional AI installation or model downloads; successful CI therefore does not establish those installations work on a physical workstation. It performs:
-
-- Ansible syntax validation with `ansible-playbook --syntax-check`
-- Static analysis with `ansible-lint`
-- A complete first provisioning run
-- A second provisioning run to test convergence
-- Verification that the second run completes with:
-
-```text
-changed=0
-unreachable=0
-failed=0
-```
-
-The second execution acts as an idempotence test: after the workstation reaches its intended state, running the same playbook again should not introduce additional changes.
-
-This CI strategy helps detect syntax errors, Ansible quality problems, provisioning failures, and non-idempotent tasks before changes reach `main`.
-
----
-
-## Development workflow
-
-Changes are developed through short-lived branches and reviewed through pull requests.
-
-Typical workflow:
-
-```text
-main
-  |
-  +-- feature branch
-         |
-         +-- modify
-         +-- validate
-         +-- commit
-         +-- push
-         +-- pull request
-                |
-                +-- CI
-                +-- review
-                +-- merge
-                       |
-                       +-- main
-```
-
-The `main` branch represents the stable development state of the workstation configuration.
-
----
-
-## Definition of success
-
-Ocelotl succeeds when a user can:
-
-1. Clone the repository on a supported clean Ubuntu workstation.
-2. Run `./bootstrap.sh`.
-3. Complete provisioning without manually installing each component.
-4. Run the provisioning process again without introducing unnecessary changes.
-5. Begin scientific and development work with the documented tools available.
-
----
-
-## Roadmap
-
-Potential future work includes:
-
-- Git user configuration
-- Named bioinformatics Conda environments
-- Apptainer / Singularity
-- CUDA and NVIDIA tooling
-- Automated testing across all supported Ubuntu versions
-- HPC / SLURM provisioning profiles
-- Cloud provisioning profiles
-- Additional scientific command-line utilities
-- Optional workstation profiles for different use cases
-
-These items are not part of the current workstation playbook unless explicitly marked as implemented.
-
----
-
-## Release status
-
-The latest Git tag is:
-
-```text
-v1.2.0
-```
-
-The annotated `v1.2.0` tag has been created. The corresponding GitHub Release is still a draft and has not been published; see the [CHANGELOG](CHANGELOG) for release history and subsequent changes.
-
----
-
-## Why Ocelotl?
-
-**Ocelotl** is the Nahuatl word for the ocelot, a wild feline native to the Americas.
-
-The name reflects adaptability, precision, and resilience.
-**Qualities that also characterize reproducible scientific computing.**
-
----
-
-## License
-
-Ocelotl is available under the [MIT License](LICENSE).
+**Latest tag:** `v1.2.0` (GitHub Release publication is separate). **License:** [MIT](LICENSE).
