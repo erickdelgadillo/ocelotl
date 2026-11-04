@@ -1,0 +1,49 @@
+---
+- name: Install Git and OpenSSH client
+  become: true
+  ansible.builtin.apt:
+    name:
+      - git
+      - openssh-client
+    state: present
+
+- name: Create SSH configuration directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.ssh"
+    state: directory
+    mode: "0700"
+  when: git_ssh_agent_enabled | bool
+
+- name: Allow GitHub authentication to add unlocked keys to the agent
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.ssh/config"
+    create: true
+    mode: "0600"
+    insertbefore: BOF
+    marker: "# {mark} OCELOTL GITHUB SSH"
+    block: |
+      Host github.com
+        AddKeysToAgent yes
+  when: git_ssh_agent_enabled | bool
+
+- name: Create user systemd unit directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/systemd/user"
+    state: directory
+    mode: "0755"
+  when: git_ssh_agent_enabled | bool
+
+- name: Install on-demand user SSH agent service
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/ocelotl-ssh-agent.service"
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Ocelotl fallback SSH agent
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/bin/ssh-agent -D -a %t/ocelotl-ssh-agent.sock
+      Restart=on-failure
+      RestartSec=2
+  when: git_ssh_agent_enabled | bool
