@@ -1,4 +1,2 @@
 ---
 git_ssh_agent_enabled: true
-git_ssh_agent_service: ocelotl-ssh-agent.service
-git_ssh_agent_socket: "{{ ansible_env.XDG_RUNTIME_DIR | default('/run/user/' ~ ansible_user_uid, true) }}/ocelotl-ssh-agent.sock"
