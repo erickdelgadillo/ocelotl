@@ -6,4 +6,5 @@
     - common
     - ansible
     - vscode
+    - git
     - shell
