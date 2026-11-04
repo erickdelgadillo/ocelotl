@@ -35,4 +35,4 @@ jobs:
       - name: Lint Ansible
         run: ansible-lint
       - name: Run shell regression tests
-        run: python -m unittest discover -s tests -p 'test_shell_startup.py' -v
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
