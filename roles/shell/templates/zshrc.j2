@@ -55,3 +55,22 @@ alias gs="git status"
 alias gl="git log --oneline --graph --decorate"
 alias ..="cd .."
 alias ...="cd ../.."
+
+# Reuse an accessible desktop agent (ssh-add returns 1 for an empty but working
+# agent). Start one shared per-user fallback only when the current socket is
+# unavailable. Never launch one agent per terminal and never prompt at startup.
+if [[ -o interactive ]] && [[ -n "$XDG_RUNTIME_DIR" ]] && \
+   command -v ssh-add >/dev/null 2>&1 && command -v systemctl >/dev/null 2>&1; then
+  _ocelotl_agent_status=2
+  if [[ -n "$SSH_AUTH_SOCK" ]]; then
+    ssh-add -l >/dev/null 2>&1
+    _ocelotl_agent_status=$?
+  fi
+  if (( _ocelotl_agent_status == 2 )); then
+    if systemctl --user start ocelotl-ssh-agent.service 2>/dev/null && \
+       [[ -S "$XDG_RUNTIME_DIR/ocelotl-ssh-agent.sock" ]]; then
+      export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ocelotl-ssh-agent.sock"
+    fi
+  fi
+  unset _ocelotl_agent_status
+fi
