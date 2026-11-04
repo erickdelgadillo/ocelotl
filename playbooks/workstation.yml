@@ -16,6 +16,7 @@
     - docker
     - nextflow
     - vscode
+    - git
     - shell
 
     - role: security_tools
