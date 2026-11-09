@@ -1,0 +1,51 @@
+name: GitHub Actions lint
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    name: Validate GitHub Actions workflows
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Lint all existing workflows
+        run: |
+          docker run --rm -v "$PWD:/repo:ro" -w /repo rhysd/actionlint:1.7.12 \
+            .github/workflows/ansible-ci.yml \
+            .github/workflows/quick-ci.yml \
+            .github/workflows/shell-startup.yml \
+            .github/workflows/actionlint.yml
+
+      - name: Verify invalid workflow is rejected
+        run: |
+          printf '%s\n' \
+            'name: Invalid fixture' \
+            'on: push' \
+            'jobs:' \
+            '  example:' \
+            '    runs-on: ubuntu-latest' \
+            '    steps:' \
+            '      - run: echo hello' \
+            '        invalid_property: true' \
+            | docker run --rm -i rhysd/actionlint:1.7.12 - >/tmp/actionlint-negative.log 2>&1 && {
+              cat /tmp/actionlint-negative.log
+              echo 'ERROR: actionlint accepted an invalid workflow'
+              exit 1
+            }
+          grep -q 'invalid_property' /tmp/actionlint-negative.log
